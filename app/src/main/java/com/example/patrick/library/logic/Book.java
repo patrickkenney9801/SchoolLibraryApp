@@ -14,12 +14,12 @@ public class Book {
     public boolean checkedOut;
     public String dateCheckedOut;
 
-    public Book (String name, String authFN, String authLN, String dateP, String dateCO) {
+    public Book (String name, String authFN, String authLN, String dateP) {
         this.name = name;
         authorFirstName = authFN;
         authorLastName = authLN;
         datePublished = dateP;
         checkedOut = false;
-        dateCheckedOut = dateCO;
+        dateCheckedOut = "";
     }
 }
