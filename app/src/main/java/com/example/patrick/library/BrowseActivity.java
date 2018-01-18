@@ -9,7 +9,7 @@ public class BrowseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
-\\
+
         String[] bookNames = new String[10];
         Book.books[0] = new Book("The Count of Monte Cristo", "Alexandre", "Dumas", "1884");
         bookNames[0] = Book.books[0].name;
