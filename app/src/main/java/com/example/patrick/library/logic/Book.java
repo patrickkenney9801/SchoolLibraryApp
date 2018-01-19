@@ -12,6 +12,7 @@ public class Book {
     public String authorLastName;
     public String datePublished;
     public boolean checkedOut;
+    public boolean reserved;
     public String dateCheckedOut;
 
     public Book (String name, String authFN, String authLN, String dateP) {
@@ -20,6 +21,7 @@ public class Book {
         authorLastName = authLN;
         datePublished = dateP;
         checkedOut = false;
+        reserved = false;
         dateCheckedOut = "";
     }
 }

@@ -17,8 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateAccountActivity" />
-        <activity android:name=".BrowseActivity"></activity>
-        <activity android:name=".BookDetailActivity"></activity>
+        <activity android:name=".BrowseActivity" />
+        <activity android:name=".BookDetailActivity" />
+        <activity android:name=".MapActivity"></activity>
     </application>
 
 </manifest>

@@ -39,7 +39,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptCreateAccount();
+                verifyAccount();
             }
         });
 
@@ -81,5 +81,33 @@ public class CreateAccountActivity extends AppCompatActivity {
     private void backToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void verifyAccount() {
+        if (emailAddressEnter.getText().length() < 5) {
+            ((TextView) findViewById(R.id.create_account_error)).setText("Please enter valid email");
+            return;
+        }
+        if (passwordEnter.getText().length() < 8) {
+            ((TextView) findViewById(R.id.create_account_error)).setText("Passwords must be over 7 characters");
+            return;
+        }
+        if (!equivalent(passwordEnter.getText().toString(), retypePasswordEnter.getText().toString())) {
+            ((TextView) findViewById(R.id.create_account_error)).setText("Passwords do not match");
+            return;
+        }
+        attemptCreateAccount();
+    }
+
+    private boolean equivalent(String s1, String s2) {
+        if (s1.length() != s2.length() || s1.length() < 1)
+            return false;
+        char[] c1 = s1.toCharArray();
+        char[] c2 = s2.toCharArray();
+
+        for (int i = 0; i < s1.length(); i++)
+            if (c1[i] != c2[i])
+                return false;
+        return true;
     }
 }

@@ -13,6 +13,7 @@ import com.example.patrick.library.logic.Book;
 public class BookDetailActivity extends AppCompatActivity {
     private Button back;
     private Button checkOut;
+    private Button reserve;
     private Book book;
     private int bookID;
 
@@ -38,6 +39,7 @@ public class BookDetailActivity extends AppCompatActivity {
         });
 
         checkOut = findViewById(R.id.checkout);
+        reserve = findViewById(R.id.reserve);
         if (book.checkedOut)
             checkOut.setText("RETURN");
         else checkOut.setText("CHECK OUT");
@@ -48,9 +50,35 @@ public class BookDetailActivity extends AppCompatActivity {
                 if (!book.checkedOut) {
                     book.checkedOut = true;
                     checkOut.setText("RETURN");
+                    book.reserved = false;
+                    reserve.setEnabled(false);
+                    reserve.setText("RESERVE");
                 } else {
                     book.checkedOut = false;
                     checkOut.setText("CHECK OUT");
+                    reserve.setEnabled(true);
+                }
+            }
+        });
+
+        reserve.setEnabled(true);
+        if (book.checkedOut) {
+            reserve.setText("RESERVE");
+            reserve.setEnabled(false);
+        }
+        else if (book.reserved)
+            reserve.setText("UN-RESERVE");
+        else reserve.setText("RESERVE");
+
+        reserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!book.reserved) {
+                    book.reserved = true;
+                    reserve.setText("UN-RESERVE");
+                } else {
+                    book.reserved = false;
+                    reserve.setText("RESERVE");
                 }
             }
         });

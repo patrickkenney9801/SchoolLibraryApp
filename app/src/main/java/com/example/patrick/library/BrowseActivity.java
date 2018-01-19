@@ -19,7 +19,7 @@ public class BrowseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
 
-        String[] bookNames = new String[10];
+        String[] bookNames = new String[11];
         bookNames[0] = Book.books[0].name;
         bookNames[1] = Book.books[1].name;
         bookNames[2] = Book.books[2].name;
@@ -30,6 +30,7 @@ public class BrowseActivity extends AppCompatActivity {
         bookNames[7] = Book.books[7].name;
         bookNames[8] = Book.books[8].name;
         bookNames[9] = Book.books[9].name;
+        bookNames[10] = "Library Map";
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, bookNames);
@@ -46,8 +47,13 @@ public class BrowseActivity extends AppCompatActivity {
     }
 
     private void openBookDetail(int position) {
-        Intent intent = new Intent(this, BookDetailActivity.class);
-        intent.putExtra("BOOK_ID", ""+position);
-        startActivity(intent);
+        if (position != Book.books.length) {
+            Intent intent = new Intent(this, BookDetailActivity.class);
+            intent.putExtra("BOOK_ID", "" + position);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
+        }
     }
 }
