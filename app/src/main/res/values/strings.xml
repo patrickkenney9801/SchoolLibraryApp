@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Library</string>
     <string name="saved_data_file_key" translatable="false">com.example.patrick.library.SAVED_DATA</string>
+    <string name="KENNEY_SERVER_IP" translatable="false">192.168.1.72:9801</string>
 
     <string name="server_password">supersecretpassword12345</string>
 
@@ -18,4 +19,21 @@
     <string name="last_library_key">Last Library Key</string>
     <string name="error_incorrect_email">No such user exists</string>
     <string name="error_incorrect_password">Password is incorrect</string>
+
+    <!-- CreateAccountActivity -->
+    <string name="error_password_match">Passwords must match</string>
+    <string name="error_email_duplicate">Email already in use</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+
+    <!-- LibraryLoginActivity -->
+    <string name="login_below">Returning Users</string>
+    <string name="new_users">New Users</string>
+    <string name="prompt_library_password">Library Password</string>
+    <string name="prompt_general_sign_up">General Public</string>
+    <string name="prompt_teacher_sign_up">Teacher</string>
+    <string name="prompt_librarian_sign_up">Librarian</string>
+    <string name="user_role">User Role</string>
+    <string name="checkout_limit">Checkout Limit</string>
+    <string name="user_book_count">User Book Count</string>
+    <string name="library_key">Library Key</string>
 </resources>

@@ -128,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
+            /*
             Book.books[0] = new Book("The Count of Monte Cristo", "Alexandre", "Dumas", "1884");
             Book.books[1] = new Book("The Three Musketeers", "Alexandre", "Dumas", "July 1844");
             Book.books[2] = new Book("Twenty Years After", "Alexandre", "Dumas", "1845");
@@ -138,6 +139,7 @@ public class LoginActivity extends AppCompatActivity {
             Book.books[7] = new Book("Resurrection", "Leo", "Tolstoy", "1899");
             Book.books[8] = new Book("The Idiot","Fyodor", "Dostoyevsky", "1869");
             Book.books[9] = new Book("The Death of Ivan Ilyich", "Leo", "Tolstoy", "1886");
+            */
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
@@ -249,8 +251,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     String body = String.valueOf(credentialsJSON);
 
-                    Log.d("dgsahj", mEmail);
-
                     // construct the URL to fetch a user
                     Uri.Builder  builder = new Uri.Builder();
                     builder.scheme("http")
@@ -259,7 +259,6 @@ public class LoginActivity extends AppCompatActivity {
                             .appendPath("api")
                             .appendPath("users")
                             .appendPath("login")
-                            .appendPath("credentials")
                             .build();
                     URL url = new URL(builder.toString());
                     // connect to the URL and open the reader

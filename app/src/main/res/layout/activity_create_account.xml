@@ -1,116 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context="com.example.patrick.library.LoginActivity">
 
+    <!-- Create Account progress -->
+    <ProgressBar
+        android:id="@+id/create_account_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
+    <ScrollView
+        android:id="@+id/create_account_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/text_email"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:singleLine="false"
-        app:layout_constraintTop_toBottomOf="@+id/createAccountSpace"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-    <EditText
-        android:id="@+id/text_password"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintTop_toBottomOf="@+id/text_email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="123dp" />
+            <EditText
+                android:id="@+id/text_first_name"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="120dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="@string/prompt_first_name" />
 
-    <EditText
-        android:id="@+id/createRetypePassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Retype Password"
-        android:inputType="textPassword"
-        app:layout_constraintTop_toBottomOf="@+id/text_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline23"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="200dp" />
+            <EditText
+                android:id="@+id/text_last_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_last_name" />
 
-    <Button
-        android:id="@+id/buttonSignUp"
-        android:layout_width="121dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="184dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Sign Up"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent" />
+            <EditText
+                android:id="@+id/text_email"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:singleLine="false" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline23"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+            <EditText
+                android:id="@+id/text_password"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword" />
 
-    <Space
-        android:id="@+id/createAccountSpace"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="154dp"
-        tools:layout_editor_absoluteY="0dp" />
+            <EditText
+                android:id="@+id/createRetypePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_confirm_password"
+                android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/create_account_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="334dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonSignUp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent" />
+            <Button
+                android:id="@+id/buttonSignUp"
+                android:layout_width="121dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="184dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/prompt_sign_up" />
 
-    <TextView
-        android:id="@+id/create_account_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text=""
-        android:textColor="@android:color/holo_red_light"
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/guideline23"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createRetypePassword" />
+        </LinearLayout>
+    </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

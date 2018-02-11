@@ -1,6 +1,8 @@
 package com.example.patrick.library;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Debug;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,17 +28,16 @@ public class BrowseActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                                        Context.MODE_PRIVATE);
+        if (savedData.getString(getString(R.string.last_library_key), null) == null ||
+                savedData.getString(getString(R.string.last_library_key), null).length() != 36) {
+            Intent intent = new Intent(this, BrowseLibraryActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         String[] bookNames = new String[10];
-        bookNames[0] = Book.books[0].name;
-        bookNames[1] = Book.books[1].name;
-        bookNames[2] = Book.books[2].name;
-        bookNames[3] = Book.books[3].name;
-        bookNames[4] = Book.books[4].name;
-        bookNames[5] = Book.books[5].name;
-        bookNames[6] = Book.books[6].name;
-        bookNames[7] = Book.books[7].name;
-        bookNames[8] = Book.books[8].name;
-        bookNames[9] = Book.books[9].name;
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_listview, bookNames);

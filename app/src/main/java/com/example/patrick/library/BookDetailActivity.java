@@ -30,7 +30,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
         Intent startingIntent = getIntent();
         bookID = Integer.parseInt(startingIntent.getStringExtra("BOOK_ID"));
-        book = Book.books[bookID];
+        book = Book.books.get(bookID);
 
         ((TextView) findViewById(R.id.book_name)).setText(book.name);
         ((TextView) findViewById(R.id.author_name)).setText(book.authorFirstName + " " + book.authorLastName);
