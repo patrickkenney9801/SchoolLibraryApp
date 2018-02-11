@@ -44,7 +44,7 @@
                 android:ems="10"
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
-                android:singleLine="false"/>
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/text_password"
@@ -55,7 +55,8 @@
                 android:layout_marginStart="8dp"
                 android:ems="10"
                 android:hint="@string/prompt_password"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/buttonLogin"

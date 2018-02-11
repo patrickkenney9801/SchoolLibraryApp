@@ -29,8 +29,11 @@
         <activity android:name=".BookDetailActivity" />
         <activity android:name=".LibraryLoginActivity" />
         <activity android:name=".ReportBugActivity" />
+        <activity android:name=".CreateBookActivity" />
+        <activity android:name=".CreateLibraryActivity" />
         <activity android:name=".MapActivity" />
-        <activity android:name=".BrowseLibraryActivity"></activity>
+        <activity android:name=".BrowseLibraryActivity" />
+        <activity android:name=".AdvancedMenuActivity"></activity>
     </application>
 
 </manifest>

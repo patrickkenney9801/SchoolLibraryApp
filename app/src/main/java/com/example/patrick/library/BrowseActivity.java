@@ -1,8 +1,17 @@
 package com.example.patrick.library;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Debug;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +25,37 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.patrick.library.logic.Book;
+import com.example.patrick.library.logic.Library;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class BrowseActivity extends AppCompatActivity {
+
+    private FetchBooksTask mTask;
+
+    private ListView mListView;
+    private ArrayAdapter mAdapter;
+    private ArrayList<String> bookNames = new ArrayList<>();
+
+    private View mBrowseForm;
+    private View mProgressView;
+
+    private final Object dataLock = new Object();
+
+    private String lastLibraryKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +66,26 @@ public class BrowseActivity extends AppCompatActivity {
 
         SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
                                         Context.MODE_PRIVATE);
-        if (savedData.getString(getString(R.string.last_library_key), null) == null ||
-                savedData.getString(getString(R.string.last_library_key), null).length() != 36) {
+        lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
+        if (lastLibraryKey == null || lastLibraryKey.length() != 36) {
             Intent intent = new Intent(this, BrowseLibraryActivity.class);
             startActivity(intent);
             return;
         }
 
-        String[] bookNames = new String[10];
+        mBrowseForm = findViewById(R.id.browse_form);
+        mProgressView = findViewById(R.id.browse_progress);
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
+        bookNames.add("");
+        updateBooks();
+
+        mAdapter = new ArrayAdapter<>(this,
                 R.layout.activity_listview, bookNames);
 
-        ListView listView = findViewById(R.id.book_list);
-        listView.setAdapter(adapter);
+        mListView = findViewById(R.id.book_list);
+        mListView.setAdapter(mAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 openBookDetail(position);
@@ -62,21 +102,29 @@ public class BrowseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
-                Intent intent = new Intent(this, MapActivity.class);
+                intent = new Intent(this, MapActivity.class);
                 startActivity(intent);
                 return true;
 
             case R.id.change_library:
+                intent = new Intent(this, BrowseLibraryActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.advanced:
+                intent = new Intent(this, AdvancedMenuActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.report_bug:
+                intent = new Intent(this, ReportBugActivity.class);
+                startActivity(intent);
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -86,5 +134,202 @@ public class BrowseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BookDetailActivity.class);
         intent.putExtra("BOOK_ID", "" + position);
         startActivity(intent);
+    }
+
+    /**
+     * Updates all book names from the server after storing their data
+     * @return
+     */
+    private void getBooks() {
+        ArrayList<String> bNames = new ArrayList<>();
+        for (int i = 0; i < Book.books.size(); i++)
+            bNames.add(Book.books.get(i).name);
+        bookNames.clear();
+        bookNames.addAll(bNames);
+    }
+
+    /**
+     * Gets books from the server for the library
+     */
+    private void updateBooks() {
+        try {
+            synchronized (dataLock) {
+                showProgress(true);
+                mTask = new BrowseActivity.FetchBooksTask(this, lastLibraryKey);
+                mTask.execute();
+            }
+        } catch(Exception e) {Log.e("3651236128381", e.toString());}
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mBrowseForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBrowseForm.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mBrowseForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mBrowseForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public class FetchBooksTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String LOG_TAG = BrowseActivity.FetchBooksTask.class.getSimpleName();
+
+        private Activity mParent;
+        private String mLibraryKey;
+
+        FetchBooksTask(Activity parent, String lKey) {
+            this.mParent = parent;
+            this.mLibraryKey = lKey;
+        }
+
+        protected Boolean doInBackground(Void... Params) {
+            // variables that we will have to close in try loop
+            HttpURLConnection urlConnection = null;
+            BufferedWriter out = null;
+            BufferedReader reader = null;
+
+            // the unparsed JSON response from the server
+            int responseCode = -1;
+
+            // check for internet connection
+            ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo info = manager.getActiveNetworkInfo();
+
+            if(info == null || !info.isConnected()) {
+                // if there is no network, inform user through a toast
+                mParent.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mParent, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+                        Log.d(LOG_TAG, "No connection available");
+                    }
+                });
+            } else {
+                try {
+                    // create server JSON
+                    JSONObject serverJSON = new JSONObject();
+                    serverJSON.put("server_password", getString(R.string.server_password));
+                    serverJSON.put("library_key", mLibraryKey);
+
+                    String body = String.valueOf(serverJSON);
+
+                    // construct the URL to fetch a user
+                    Uri.Builder  builder = new Uri.Builder();
+                    builder.scheme("http")
+                            .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
+                            .appendPath("library")
+                            .appendPath("api")
+                            .appendPath("libraries")
+                            .appendPath("getbooks")
+                            .build();
+                    URL url = new URL(builder.toString());
+                    // connect to the URL and open the reader
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoInput(true);
+                    urlConnection.setUseCaches(false);
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setReadTimeout(10000);
+                    urlConnection.setConnectTimeout(15000);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    urlConnection.setChunkedStreamingMode(0);
+                    urlConnection.connect();
+
+                    // send JSON to Cloud Server
+                    out = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
+                    out.write(body);
+                    out.flush();
+
+                    // see if post was a success
+                    responseCode = urlConnection.getResponseCode();
+                    Log.d(LOG_TAG, "Response Code from Server: "+responseCode);
+
+                    if(responseCode == 200) {
+                        // read response to get user data from server
+                        reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String line = "";
+                        String responseBody = "";
+                        while((line = reader.readLine()) != null) {
+                            responseBody += line + '\n';
+                        }
+
+                        JSONArray bookJSON = new JSONArray(responseBody);
+
+                        Book.books.clear();
+
+                        for (int i = 0; i < bookJSON.length(); i++) {
+                            JSONObject book = bookJSON.getJSONObject(i);
+
+                            // add libraries to list
+                            Book.books.add(new Book( book.getString("name"), book.getString("author_first_name"),
+                                    book.getString("author_last_name"), book.getString("year_published"),
+                                    Boolean.parseBoolean(book.getString("reserved")), book.getString("date_reserved"),
+                                    Boolean.parseBoolean(book.getString("checked_out")), book.getString("date_checked_out"),
+                                    book.getString("user_key"), book.getString("library_key"), book.getString("book_key")));
+                        }
+
+                        Log.d(LOG_TAG, bookJSON.toString());
+                        return true;
+                    } else if(responseCode == 310) {
+                        return false;
+                    } else {
+                        Log.e(LOG_TAG, "response Code = "+responseCode);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(LOG_TAG, "The URL was incorrectly formed");
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Unidentified error in network operations while creating account");
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (out != null) {
+                        try {
+                            out.close();
+                            reader.close();
+                        } catch(Exception e) {
+                            Log.e(LOG_TAG, "Couldn't close out or reader stream", e);
+                        }
+
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            // update list view
+            getBooks();
+            mAdapter.notifyDataSetChanged();
+            mTask = null;
+            showProgress(false);
+        }
     }
 }

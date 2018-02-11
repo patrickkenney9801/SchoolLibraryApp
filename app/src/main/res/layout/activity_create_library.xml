@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context="com.example.patrick.library.CreateLibraryActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" >
+    </include>
+
+    <EditText
+        android:id="@+id/LibraryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:ems="10"
+        android:hint=" Library Name"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="64dp" />
+
+    <EditText
+        android:id="@+id/LibrarianPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Librarian Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="110dp" />
+
+    <EditText
+        android:id="@+id/TeacherPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Teacher Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="156dp" />
+
+    <EditText
+        android:id="@+id/GeneralPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="General Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="202dp" />
+
+    <EditText
+        android:id="@+id/GeneralCheckoutLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="General Checkout Limit"
+        android:inputType="textPostalAddress"
+        android:singleLine="true"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="248dp" />
+
+    <Button
+        android:id="@+id/CreateLibraryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Create Library"
+        tools:layout_editor_absoluteX="125dp"
+        tools:layout_editor_absoluteY="349dp" />
+</LinearLayout>

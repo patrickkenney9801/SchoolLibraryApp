@@ -38,18 +38,20 @@
                 android:id="@+id/text_first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
-                android:layout_marginTop="120dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="120dp"
                 android:ems="10"
-                android:hint="@string/prompt_first_name" />
+                android:hint="@string/prompt_first_name"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/text_last_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="@string/prompt_last_name" />
+                android:hint="@string/prompt_last_name"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/text_email"
@@ -60,7 +62,7 @@
                 android:ems="10"
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
-                android:singleLine="false" />
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/text_password"
@@ -70,7 +72,8 @@
                 android:layout_marginStart="8dp"
                 android:ems="10"
                 android:hint="@string/prompt_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/createRetypePassword"
@@ -78,7 +81,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/prompt_confirm_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/buttonSignUp"

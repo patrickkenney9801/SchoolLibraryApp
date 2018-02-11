@@ -110,21 +110,36 @@ public class LibraryLoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // do not allow user to navidate the app if they do not belong to a library
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
+        if (lastLibraryKey == null || lastLibraryKey.length() != 36)
+            return true;
+
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
-                Intent intent = new Intent(this, MapActivity.class);
+                intent = new Intent(this, MapActivity.class);
                 startActivity(intent);
                 return true;
 
             case R.id.change_library:
+                intent = new Intent(this, BrowseLibraryActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.advanced:
+                intent = new Intent(this, AdvancedMenuActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.report_bug:
+                intent = new Intent(this, ReportBugActivity.class);
+                startActivity(intent);
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }

@@ -36,4 +36,18 @@
     <string name="checkout_limit">Checkout Limit</string>
     <string name="user_book_count">User Book Count</string>
     <string name="library_key">Library Key</string>
+
+    <!-- Toolbar -->
+    <string name="show_map">Show Map</string>
+    <string name="change_library">Change Library</string>
+    <string name="advanced">Advanced</string>
+    <string name="report_bug">Report Bug</string>
+
+    <!-- AdvancedMenuActivity -->
+    <string name="create_library">Create Library</string>
+    <string name="librarians_only">Librarians Only</string>
+    <string name="add_book">Add Book</string>
+    <string name="checkout_books">Checkout Books</string>
+    <string name="prompt_return">Accept Returns</string>
+
 </resources>

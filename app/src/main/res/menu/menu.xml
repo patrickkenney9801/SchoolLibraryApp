@@ -6,17 +6,22 @@
     <item
         android:id="@+id/show_map"
         android:orderInCategory="100"
-        android:title="Library Map"
+        android:title="@string/show_map"
         app:showAsAction="never" />
     <item
         android:id="@+id/change_library"
         android:orderInCategory="200"
-        android:title="Change Library"
+        android:title="@string/change_library"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/advanced"
+        android:orderInCategory="300"
+        android:title="@string/advanced"
         app:showAsAction="never" />
     <item
         android:id="@+id/report_bug"
-        android:orderInCategory="300"
-        android:title="Report Bug"
+        android:orderInCategory="400"
+        android:title="@string/report_bug"
         app:showAsAction="never" />
 
 </menu>

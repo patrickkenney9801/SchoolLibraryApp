@@ -90,6 +90,7 @@
                 android:fontFamily="sans-serif"
                 android:hint="@string/prompt_library_password"
                 android:inputType="textPassword"
+                android:singleLine="true"
                 android:textSize="16sp" />
 
             <Button

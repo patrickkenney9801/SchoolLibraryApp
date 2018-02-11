@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.example.patrick.library.logic.Book;
 
 public class BookDetailActivity extends AppCompatActivity {
-    private Button back;
     private Button checkOut;
     private Button reserve;
     private Book book;
@@ -35,15 +34,6 @@ public class BookDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.book_name)).setText(book.name);
         ((TextView) findViewById(R.id.author_name)).setText(book.authorFirstName + " " + book.authorLastName);
         ((TextView) findViewById(R.id.date_published)).setText(book.datePublished);
-
-        back = findViewById(R.id.book_detail_back);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBack();
-            }
-        });
 
         checkOut = findViewById(R.id.checkout);
         reserve = findViewById(R.id.reserve);
@@ -100,28 +90,31 @@ public class BookDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
-                Intent intent = new Intent(this, MapActivity.class);
+                intent = new Intent(this, MapActivity.class);
                 startActivity(intent);
                 return true;
 
             case R.id.change_library:
+                intent = new Intent(this, BrowseLibraryActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.advanced:
+                intent = new Intent(this, AdvancedMenuActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.report_bug:
+                intent = new Intent(this, ReportBugActivity.class);
+                startActivity(intent);
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
-    }
-
-    private void goBack() {
-        Intent intent = new Intent(this, BrowseActivity.class);
-        startActivity(intent);
     }
 }

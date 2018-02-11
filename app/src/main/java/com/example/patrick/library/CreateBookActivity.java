@@ -7,17 +7,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
-public class MapActivity extends AppCompatActivity {
+public class CreateBookActivity extends AppCompatActivity {
 
-    @Override
+    private EditText bookNameEnter;
+    private EditText authorFirstNameEnter;
+    private EditText authorLastNameEnter;
+    private EditText yearPublishedEnter;
+    private EditText bookQuantityEnter;
+
+    private String bookName;
+    private String authorFirstName;
+    private String authorLastName;
+    private String yearPublished;
+    private String bookQuantity;
+
+    private Button createBook;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_create_book);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        bookNameEnter = findViewById(R.id.bookName);
+        authorFirstNameEnter = findViewById(R.id.authorFirstName);
+        authorLastNameEnter = findViewById(R.id.authorLastName);
+        yearPublishedEnter = findViewById(R.id.yearPublished);
+        bookQuantityEnter = findViewById(R.id.quantity);
     }
 
     @Override
@@ -32,6 +52,8 @@ public class MapActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
+                intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.change_library:
@@ -50,7 +72,7 @@ public class MapActivity extends AppCompatActivity {
                 return true;
 
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
 
         }
     }

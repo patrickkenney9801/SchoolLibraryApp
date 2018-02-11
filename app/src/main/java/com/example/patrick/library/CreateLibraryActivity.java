@@ -7,17 +7,34 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
-public class MapActivity extends AppCompatActivity {
+public class CreateLibraryActivity extends AppCompatActivity {
 
-    @Override
+    private EditText libraryNameEnter;
+    private EditText libraryAddressEnter;
+    private EditText librarianPasswordEnter;
+    private EditText teacherPasswordEnter;
+    private EditText generalPasswordEnter;
+
+    private String libraryName;
+    private String libraryAddress;
+    private String librarianPassword;
+    private String teacherPassword;
+    private String generalPassword;
+
+    private Button createLibrary;
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_create_library);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
     }
 
     @Override
@@ -32,6 +49,8 @@ public class MapActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
+                intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.change_library:
@@ -50,7 +69,7 @@ public class MapActivity extends AppCompatActivity {
                 return true;
 
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
 
         }
     }
