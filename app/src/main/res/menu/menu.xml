@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/show_map"
+        android:orderInCategory="100"
+        android:title="Library Map"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/change_library"
+        android:orderInCategory="200"
+        android:title="Change Library"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/report_bug"
+        android:orderInCategory="300"
+        android:title="Report Bug"
+        app:showAsAction="never" />
+
+</menu>

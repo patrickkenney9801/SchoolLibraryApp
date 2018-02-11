@@ -1,16 +1,16 @@
 package com.example.patrick.library;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
-public class MapActivity extends AppCompatActivity {
+public class LibraryLoginActivity extends AppCompatActivity {
+
+    private Button libraryLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_library_login);
     }
 }

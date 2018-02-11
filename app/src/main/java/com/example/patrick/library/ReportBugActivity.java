@@ -1,16 +1,17 @@
 package com.example.patrick.library;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
-public class MapActivity extends AppCompatActivity {
+public class ReportBugActivity extends AppCompatActivity {
+
+    private Button changeLibrary;
+    private Button reportBug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_report_bug);
     }
 }

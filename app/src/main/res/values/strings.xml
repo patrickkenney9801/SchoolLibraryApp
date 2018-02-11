@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Library</string>
+    <string name="saved_data_file_key" translatable="false">com.example.patrick.library.SAVED_DATA</string>
+
+    <string name="server_password">supersecretpassword12345</string>
+
+    <!-- LoginActivity -->
+    <string name="error_no_internet">No connection available. Please try again later.</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_password">Must be 5+ characters</string>
+    <string name="prompt_first_name">First Name</string>
+    <string name="prompt_last_name">Last Name</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_login">Login</string>
+    <string name="prompt_sign_up">Sign Up</string>
+    <string name="user_key">User Key</string>
+    <string name="last_library_key">Last Library Key</string>
+    <string name="error_incorrect_email">No such user exists</string>
+    <string name="error_incorrect_password">Password is incorrect</string>
 </resources>

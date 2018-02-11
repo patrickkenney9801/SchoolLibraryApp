@@ -1,11 +1,9 @@
 package com.example.patrick.library;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.*;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
 import com.example.patrick.library.logic.Book;
@@ -31,8 +29,8 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         //firstNameEnter = findViewById(R.id.textEmail);
         //lastNameEnter = findViewById(R.id.create_Password);
-        emailAddressEnter = findViewById(R.id.textEmail);
-        passwordEnter = findViewById(R.id.createPassword);
+        emailAddressEnter = findViewById(R.id.text_email);
+        passwordEnter = findViewById(R.id.text_password);
         retypePasswordEnter = findViewById(R.id.createRetypePassword);
         signUpButton = findViewById(R.id.buttonSignUp);
 

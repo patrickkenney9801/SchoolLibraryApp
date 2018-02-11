@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.patrick.library.BookDetailActivity">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" >
+    </include>
+
     <TextView
         android:id="@+id/book_name"
         android:layout_width="385dp"
