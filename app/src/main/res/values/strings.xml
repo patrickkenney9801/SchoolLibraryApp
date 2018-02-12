@@ -50,4 +50,12 @@
     <string name="checkout_books">Checkout Books</string>
     <string name="prompt_return">Accept Returns</string>
 
+    <!-- CreateBookActivity -->
+    <string name="create_book">Create Book</string>
+    <string name="prompt_quantity">Quantity (Default 1)</string>
+    <string name="prompt_year_published">Year Published</string>
+    <string name="prompt_author_last_name">Author Last Name</string>
+    <string name="prompt_author_first_name">Author First Name</string>
+    <string name="prompt_book_name">Book Name</string>
+
 </resources>

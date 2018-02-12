@@ -1,6 +1,8 @@
 package com.example.patrick.library;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,10 +17,18 @@ import android.widget.TextView;
 import com.example.patrick.library.logic.Book;
 
 public class BookDetailActivity extends AppCompatActivity {
-    private Button checkOut;
-    private Button reserve;
+    private Button action;
     private Book book;
     private int bookID;
+    private int bookDetailType;
+    private String userKey;
+
+    private View mProgressForm;
+    private View mBookDetailForm;
+
+    private final String reserve = "Reserve";
+    private final String unreserve = "Unreserve";
+    private final String reserved = "Reserved";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,53 +40,36 @@ public class BookDetailActivity extends AppCompatActivity {
         Intent startingIntent = getIntent();
         bookID = Integer.parseInt(startingIntent.getStringExtra("BOOK_ID"));
         book = Book.books.get(bookID);
+        bookDetailType = 1;//Integer.parseInt(startingIntent.getStringExtra("BOOK_DETAIL_TYPE"));
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        userKey = savedData.getString(getString(R.string.user_key), null);
 
         ((TextView) findViewById(R.id.book_name)).setText(book.name);
         ((TextView) findViewById(R.id.author_name)).setText(book.authorFirstName + " " + book.authorLastName);
         ((TextView) findViewById(R.id.date_published)).setText(book.datePublished);
 
-        checkOut = findViewById(R.id.checkout);
-        reserve = findViewById(R.id.reserve);
-        if (book.checkedOut)
-            checkOut.setText("RETURN");
-        else checkOut.setText("CHECK OUT");
-
-        checkOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!book.checkedOut) {
-                    book.checkedOut = true;
-                    checkOut.setText("RETURN");
-                    book.reserved = false;
-                    reserve.setEnabled(false);
-                    reserve.setText("RESERVE");
-                } else {
-                    book.checkedOut = false;
-                    checkOut.setText("CHECK OUT");
-                    reserve.setEnabled(true);
-                }
-            }
-        });
-
-        reserve.setEnabled(true);
-        if (book.checkedOut) {
-            reserve.setText("RESERVE");
-            reserve.setEnabled(false);
+        action = findViewById(R.id.book_detail_action);
+        switch (bookDetailType) {
+            case 1:     if (book.userKey == null || book.userKey.length() != 36)
+                            action.setText(reserve);
+                        else if (book.userKey.equals(userKey))
+                            action.setText(unreserve);
+                        else {
+                            action.setEnabled(false);
+                            action.setText(reserved);
+                        }
+                        break;
+            case 2:     break;
+            case 3:     break;
         }
-        else if (book.reserved)
-            reserve.setText("UN-RESERVE");
-        else reserve.setText("RESERVE");
-
-        reserve.setOnClickListener(new View.OnClickListener() {
+        action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!book.reserved) {
-                    book.reserved = true;
-                    reserve.setText("UN-RESERVE");
-                } else {
-                    book.reserved = false;
-                    reserve.setText("RESERVE");
-                }
+                if (action.getText().toString().equals(reserve))
+                    reserveBook();
+                else if (action.getText().toString().equals(unreserve))
+                    unreserveBook();
             }
         });
     }
@@ -116,5 +109,13 @@ public class BookDetailActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void reserveBook() {
+
+    }
+
+    private void unreserveBook() {
+
     }
 }

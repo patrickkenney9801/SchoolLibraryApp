@@ -97,7 +97,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
 
     private void attemptLibraryLogin(int loginMethod, String pass) {
         showProgress(true);
-        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass);
+        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey);
         mTask.execute();
     }
 
@@ -194,10 +194,11 @@ public class LibraryLoginActivity extends AppCompatActivity {
         private String mLibraryKey;
         private String mBookCount;
 
-        LibraryLoginTask(Activity parent, int logMethod, String pass) {
+        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey) {
             this.mParent = parent;
             this.loginMethod = logMethod;
             this.mPassword = pass;
+            this.mLibraryKey = libKey;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -229,7 +230,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
                     // create server JSON
                     JSONObject credentialsJSON = new JSONObject();
                     credentialsJSON.put("server_password", getString(R.string.server_password));
-                    credentialsJSON.put("library_key", selectedLibrary.libraryKey);
+                    credentialsJSON.put("library_key", mLibraryKey);
                     credentialsJSON.put("user_key", savedData.getString(getString(R.string.user_key), ""));
 
                     // construct the URL to fetch a user
@@ -293,7 +294,6 @@ public class LibraryLoginActivity extends AppCompatActivity {
                         mRole = permissionsJSON.getString("role");
                         mCOLimit = permissionsJSON.getString("checkout_limit");
                         mBookCount = permissionsJSON.getString("user_book_count");
-                        mLibraryKey = permissionsJSON.getString("library_key");
 
                         Log.d(LOG_TAG, permissionsJSON.toString());
                         return true;

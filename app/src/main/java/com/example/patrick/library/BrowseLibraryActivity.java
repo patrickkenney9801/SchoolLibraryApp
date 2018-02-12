@@ -60,9 +60,9 @@ public class BrowseLibraryActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mBrowseLibraryForm = findViewById(R.id.browse_library_form);
+        mBrowseLibraryForm = (View) findViewById(R.id.library_list);
         mProgressView = findViewById(R.id.browse_library_progress);
-        libraryNames.add("");
+        
         updateLibraries();
 
         mAdapter = new ArrayAdapter<>(this,

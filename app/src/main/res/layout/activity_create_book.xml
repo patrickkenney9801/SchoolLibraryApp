@@ -17,70 +17,79 @@
         layout="@layout/toolbar" >
     </include>
 
-    <EditText
-        android:id="@+id/bookName"
-        android:layout_width="wrap_content"
-        android:layout_height="46dp"
-        android:layout_marginTop="72dp"
-        android:ems="10"
-        android:hint="Input Book Name"
-        android:inputType="none"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="76dp" />
+    <ProgressBar
+        android:id="@+id/create_book_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/authorFirstName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Author First Name"
-        android:inputType="none"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="122dp" />
+    <ScrollView
+        android:id="@+id/create_book_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/yearPublished"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Year Published"
-        android:inputType="none"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="214dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-    <EditText
-        android:id="@+id/authorLastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Author Last Name"
-        android:inputType="none"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="168dp" />
+            <EditText
+                android:id="@+id/bookName"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:layout_marginTop="72dp"
+                android:ems="10"
+                android:hint="@string/prompt_book_name"
+                android:inputType="none"
+                android:singleLine="true" />
 
-    <EditText
-        android:id="@+id/quantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Quantity (Default 1)"
-        android:inputType="none|textPersonName"
-        android:singleLine="true"
-        app:layout_constraintBottom_toTopOf="@+id/createBookButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.648"
-        tools:layout_editor_absoluteX="85dp" />
+            <EditText
+                android:id="@+id/authorFirstName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_author_first_name"
+                android:inputType="none"
+                android:singleLine="true" />
 
-    <Button
-        android:id="@+id/createBookButton"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
-        android:text="Create Book"
-        android:layout_marginTop="32dp"
-        tools:layout_editor_absoluteX="134dp"
-        tools:layout_editor_absoluteY="445dp" />
+            <EditText
+                android:id="@+id/authorLastName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_author_last_name"
+                android:inputType="none"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/yearPublished"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_year_published"
+                android:inputType="none"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_quantity"
+                android:inputType="none|textPersonName"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/createBookButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_book"
+                android:layout_marginTop="32dp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

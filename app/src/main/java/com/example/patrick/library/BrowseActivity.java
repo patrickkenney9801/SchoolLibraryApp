@@ -65,18 +65,12 @@ public class BrowseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
-                                        Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
-        if (lastLibraryKey == null || lastLibraryKey.length() != 36) {
-            Intent intent = new Intent(this, BrowseLibraryActivity.class);
-            startActivity(intent);
-            return;
-        }
 
-        mBrowseForm = findViewById(R.id.browse_form);
+        mBrowseForm = (View) findViewById(R.id.book_list);
         mProgressView = findViewById(R.id.browse_progress);
 
-        bookNames.add("");
         updateBooks();
 
         mAdapter = new ArrayAdapter<>(this,
@@ -145,7 +139,9 @@ public class BrowseActivity extends AppCompatActivity {
         for (int i = 0; i < Book.books.size(); i++)
             bNames.add(Book.books.get(i).name);
         bookNames.clear();
-        bookNames.addAll(bNames);
+        for (int i = 0; i < bNames.size(); i++)
+            bookNames.add(bNames.get(i));
+        mAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -327,7 +323,9 @@ public class BrowseActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean success) {
             // update list view
             getBooks();
+            Log.e("gdahdgaj11111", ""+mAdapter.getCount());
             mAdapter.notifyDataSetChanged();
+            Log.e("gdahdgaj22222", ""+mAdapter.getCount());
             mTask = null;
             showProgress(false);
         }

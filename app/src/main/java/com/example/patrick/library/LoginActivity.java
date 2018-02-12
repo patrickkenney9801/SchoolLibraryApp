@@ -342,7 +342,6 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.prompt_first_name), firstName);
                 editor.putString(getString(R.string.prompt_last_name), lastName);
                 editor.putString(getString(R.string.user_key), userKey);
-                editor.putString(getString(R.string.last_library_key), lastLibraryKey);
                 editor.apply();
 
                 // clear text boxes so they're empty when user logs out
@@ -350,7 +349,7 @@ public class LoginActivity extends AppCompatActivity {
                 mPasswordView.setText("");
 
                 // launch main activity so user can begin browsing
-                Intent intent = new Intent(mParent, BrowseActivity.class);
+                Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
                 startActivity(intent);
                 finish();
             } else if (success == BAD_PASSWORD){
