@@ -17,68 +17,91 @@
         layout="@layout/toolbar" >
     </include>
 
-    <EditText
-        android:id="@+id/LibraryName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:ems="10"
-        android:hint=" Library Name"
-        android:inputType="textPersonName"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="64dp" />
+    <ProgressBar
+        android:id="@+id/create_library_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/LibrarianPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Librarian Password"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="110dp" />
+    <ScrollView
+        android:id="@+id/create_library_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/TeacherPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Teacher Password"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="156dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-    <EditText
-        android:id="@+id/GeneralPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="General Password"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="202dp" />
+            <EditText
+                android:id="@+id/create_library_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="72dp"
+                android:ems="10"
+                android:hint="@string/prompt_library_name"
+                android:inputType="textPersonName"
+                android:singleLine="true"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="64dp" />
 
-    <EditText
-        android:id="@+id/GeneralCheckoutLimit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="General Checkout Limit"
-        android:inputType="textPostalAddress"
-        android:singleLine="true"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="248dp" />
+            <EditText
+                android:id="@+id/create_librarian_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_librarian_password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="110dp" />
 
-    <Button
-        android:id="@+id/CreateLibraryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Create Library"
-        tools:layout_editor_absoluteX="125dp"
-        tools:layout_editor_absoluteY="349dp" />
+            <EditText
+                android:id="@+id/create_teacher_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_teacher_password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="156dp" />
+
+            <EditText
+                android:id="@+id/create_public_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_public_password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="202dp" />
+
+            <EditText
+                android:id="@+id/create_general_checkout_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_public_limit"
+                android:inputType="textPostalAddress"
+                android:singleLine="true"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="248dp" />
+
+            <Button
+                android:id="@+id/create_library_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/create_library"
+                tools:layout_editor_absoluteX="125dp"
+                tools:layout_editor_absoluteY="349dp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

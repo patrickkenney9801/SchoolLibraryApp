@@ -210,6 +210,9 @@ public class LoginActivity extends AppCompatActivity {
         private String lastName;
         private String lastLibraryKey;
         private String userKey;
+        private String userRole;
+        private String checkoutLimit;
+        private String userBookCount;
 
         UserLoginTask(Activity parent, String email, String password) {
             mParent = parent;
@@ -295,6 +298,11 @@ public class LoginActivity extends AppCompatActivity {
                         lastName = user.getString("last_name");
                         userKey = user.getString("user_key");
                         lastLibraryKey = user.getString("last_library_key");
+                        if (lastLibraryKey != null && lastLibraryKey.length() == 36) {
+                            userRole = user.getString("role");
+                            checkoutLimit = user.getString("checkout_limit");
+                            userBookCount = user.getString("user_book_count");
+                        }
 
                         return SUCCESS;
                     } else if (responseCode == 312) {
@@ -342,15 +350,26 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.prompt_first_name), firstName);
                 editor.putString(getString(R.string.prompt_last_name), lastName);
                 editor.putString(getString(R.string.user_key), userKey);
+                if (userRole != null) {
+                    editor.putString(getString(R.string.last_library_key), lastLibraryKey);
+                    editor.putString(getString(R.string.user_role), userRole);
+                    editor.putString(getString(R.string.checkout_limit), checkoutLimit);
+                    editor.putString(getString(R.string.checkout_books), userBookCount);
+                }
                 editor.apply();
 
                 // clear text boxes so they're empty when user logs out
                 mEmailView.setText("");
                 mPasswordView.setText("");
 
-                // launch main activity so user can begin browsing
-                Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
-                startActivity(intent);
+                // launch main activity so user can begin browsing if there is a last library on the server
+                if (userRole != null) {
+                    Intent intent = new Intent(mParent, BrowseActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
+                    startActivity(intent);
+                }
                 finish();
             } else if (success == BAD_PASSWORD){
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

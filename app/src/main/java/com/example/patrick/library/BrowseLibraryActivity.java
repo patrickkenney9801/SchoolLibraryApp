@@ -62,7 +62,7 @@ public class BrowseLibraryActivity extends AppCompatActivity {
 
         mBrowseLibraryForm = (View) findViewById(R.id.library_list);
         mProgressView = findViewById(R.id.browse_library_progress);
-        
+
         updateLibraries();
 
         mAdapter = new ArrayAdapter<>(this,

@@ -271,6 +271,7 @@ public class CreateBookActivity extends AppCompatActivity {
                             return false;
                         } else {
                             Log.e(LOG_TAG, "response Code = " + responseCode);
+                            return false;
                         }
                     }
                     return true;
@@ -303,7 +304,7 @@ public class CreateBookActivity extends AppCompatActivity {
 
             if(success) {
                 // launch browse library activity so user can find a library to join
-                Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
+                Intent intent = new Intent(mParent, BrowseActivity.class);
                 startActivity(intent);
             }
         }

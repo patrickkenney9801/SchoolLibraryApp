@@ -301,6 +301,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
                         return false;
                     } else {
                         Log.e(LOG_TAG, "response Code = "+responseCode);
+                        return false;
                     }
                 } catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "The URL was incorrectly formed");
@@ -338,7 +339,6 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.user_role), mRole);
                 editor.putString(getString(R.string.checkout_limit), mCOLimit);
                 editor.putString(getString(R.string.user_book_count), mBookCount);
-                editor.putString(getString(R.string.library_key), mLibraryKey);
                 editor.putString(getString(R.string.last_library_key), mLibraryKey);
                 editor.apply();
 

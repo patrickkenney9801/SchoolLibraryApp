@@ -35,7 +35,6 @@
     <string name="user_role">User Role</string>
     <string name="checkout_limit">Checkout Limit</string>
     <string name="user_book_count">User Book Count</string>
-    <string name="library_key">Library Key</string>
 
     <!-- Toolbar -->
     <string name="show_map">Show Map</string>
@@ -57,5 +56,12 @@
     <string name="prompt_author_last_name">Author Last Name</string>
     <string name="prompt_author_first_name">Author First Name</string>
     <string name="prompt_book_name">Book Name</string>
+
+    <!-- CreateLibraryActivity -->
+    <string name="prompt_library_name">Library Name</string>
+    <string name="prompt_librarian_password">Librarian Password</string>
+    <string name="prompt_teacher_password">Teacher Password</string>
+    <string name="prompt_public_password">Public Password</string>
+    <string name="prompt_public_limit">Public Checkout Limit</string>
 
 </resources>

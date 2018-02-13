@@ -323,9 +323,7 @@ public class BrowseActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean success) {
             // update list view
             getBooks();
-            Log.e("gdahdgaj11111", ""+mAdapter.getCount());
             mAdapter.notifyDataSetChanged();
-            Log.e("gdahdgaj22222", ""+mAdapter.getCount());
             mTask = null;
             showProgress(false);
         }
