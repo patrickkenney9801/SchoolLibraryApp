@@ -82,11 +82,14 @@ public class BookDetailActivity extends AppCompatActivity {
         switch (bookDetailType) {
             case 1:     if (book.userKey == null || book.userKey.length() != 36)
                             action.setText(RESERVE);
-                        else if (book.userKey.equals(userKey))
+                        else if (book.userKey.equals(userKey)) {
                             action.setText(UNRESERVE);
+                            ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                        }
                         else {
                             action.setEnabled(false);
                             action.setText(RESERVED);
+                            ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
                         }
                         break;
             case 2:     action.setText(CHECKOUT);
