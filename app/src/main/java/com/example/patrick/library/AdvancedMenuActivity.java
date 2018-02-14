@@ -19,7 +19,9 @@ public class AdvancedMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advanced_menu);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.advanced);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Button createLibrary = findViewById(R.id.go_to_create_library);
         createLibrary.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +99,10 @@ public class AdvancedMenuActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return true;
 
         }
@@ -113,12 +119,14 @@ public class AdvancedMenuActivity extends AppCompatActivity {
     }
 
     private void gotoCheckoutBrowse() {
-        //Intent intent = new Intent(this, CreateLibraryActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, BrowseActivity.class);
+        intent.putExtra("BROWSE_TYPE", "2");
+        startActivity(intent);
     }
 
     private void gotoReturnBrowse() {
-        //Intent intent = new Intent(this, CreateLibraryActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, BrowseActivity.class);
+        intent.putExtra("BROWSE_TYPE", "3");
+        startActivity(intent);
     }
 }

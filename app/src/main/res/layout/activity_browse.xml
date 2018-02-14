@@ -26,9 +26,15 @@
         android:layout_marginTop="16dp"
         android:visibility="gone" />
 
-            <ListView
-                android:id="@+id/book_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </ListView>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/browse_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/book_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

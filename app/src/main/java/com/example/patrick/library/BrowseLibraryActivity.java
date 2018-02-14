@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -53,12 +54,16 @@ public class BrowseLibraryActivity extends AppCompatActivity {
 
     private final Object dataLock = new Object();
 
+    private SwipeRefreshLayout mSwipeRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_library);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.libraries);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mBrowseLibraryForm = (View) findViewById(R.id.library_list);
         mProgressView = findViewById(R.id.browse_library_progress);
@@ -75,6 +80,14 @@ public class BrowseLibraryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 openLibraryLogin(position);
+            }
+        });
+
+        mSwipeRefresh = findViewById(R.id.library_refresh);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateLibraries();
             }
         });
     }
@@ -116,6 +129,10 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return super.onOptionsItemSelected(item);
 
         }
@@ -313,6 +330,7 @@ public class BrowseLibraryActivity extends AppCompatActivity {
             mAdapter.notifyDataSetChanged();
             mTask = null;
             showProgress(false);
+            mSwipeRefresh.setRefreshing(false);
         }
     }
 }

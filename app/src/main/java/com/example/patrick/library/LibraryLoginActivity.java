@@ -58,11 +58,14 @@ public class LibraryLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         Intent startingIntent = getIntent();
         int libraryID = Integer.parseInt(startingIntent.getStringExtra("Library_ID"));
         selectedLibrary = Library.libraries.get(libraryID);
+
+        toolbar.setTitle(selectedLibrary.name);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         passwordEntry = findViewById(R.id.library_password);
 
@@ -97,7 +100,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
 
     private void attemptLibraryLogin(int loginMethod, String pass) {
         showProgress(true);
-        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey);
+        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey, selectedLibrary.name);
         mTask.execute();
     }
 
@@ -140,6 +143,10 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return super.onOptionsItemSelected(item);
 
         }
@@ -193,12 +200,14 @@ public class LibraryLoginActivity extends AppCompatActivity {
         private String mCOLimit;
         private String mLibraryKey;
         private String mBookCount;
+        private String libraryName;
 
-        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey) {
+        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey, String libName) {
             this.mParent = parent;
             this.loginMethod = logMethod;
             this.mPassword = pass;
             this.mLibraryKey = libKey;
+            this.libraryName = libName;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -340,10 +349,12 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.checkout_limit), mCOLimit);
                 editor.putString(getString(R.string.user_book_count), mBookCount);
                 editor.putString(getString(R.string.last_library_key), mLibraryKey);
+                editor.putString(getString(R.string.last_library_name), libraryName);
                 editor.apply();
 
                 // take user to browse for the library
                 Intent intent = new Intent(mParent, BrowseActivity.class);
+                intent.putExtra("BROWSE_TYPE", "1");
                 startActivity(intent);
             } else {
                 passwordEntry.setError(getString(R.string.error_incorrect_password));

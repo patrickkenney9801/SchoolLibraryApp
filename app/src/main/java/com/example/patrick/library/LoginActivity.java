@@ -209,6 +209,7 @@ public class LoginActivity extends AppCompatActivity {
         private String firstName;
         private String lastName;
         private String lastLibraryKey;
+        private String lastLibraryName;
         private String userKey;
         private String userRole;
         private String checkoutLimit;
@@ -300,6 +301,7 @@ public class LoginActivity extends AppCompatActivity {
                         lastLibraryKey = user.getString("last_library_key");
                         if (lastLibraryKey != null && lastLibraryKey.length() == 36) {
                             userRole = user.getString("role");
+                            lastLibraryName = user.getString("last_library_name");
                             checkoutLimit = user.getString("checkout_limit");
                             userBookCount = user.getString("user_book_count");
                         }
@@ -352,6 +354,7 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.user_key), userKey);
                 if (userRole != null) {
                     editor.putString(getString(R.string.last_library_key), lastLibraryKey);
+                    editor.putString(getString(R.string.last_library_name), lastLibraryName);
                     editor.putString(getString(R.string.user_role), userRole);
                     editor.putString(getString(R.string.checkout_limit), checkoutLimit);
                     editor.putString(getString(R.string.checkout_books), userBookCount);
@@ -365,9 +368,12 @@ public class LoginActivity extends AppCompatActivity {
                 // launch main activity so user can begin browsing if there is a last library on the server
                 if (userRole != null) {
                     Intent intent = new Intent(mParent, BrowseActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("BROWSE_TYPE", "1");
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
                 finish();

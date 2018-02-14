@@ -54,7 +54,9 @@ public class CreateBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_book);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.add_book);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         bookNameEnter = findViewById(R.id.bookName);
         authorFirstNameEnter = findViewById(R.id.authorFirstName);
@@ -105,6 +107,10 @@ public class CreateBookActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return true;
 
         }
@@ -305,6 +311,7 @@ public class CreateBookActivity extends AppCompatActivity {
             if(success) {
                 // launch browse library activity so user can find a library to join
                 Intent intent = new Intent(mParent, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         }

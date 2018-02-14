@@ -333,6 +333,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                 // launch browse library activity so user can find a library to join
                 Intent intent = new Intent(mParent, BrowseLibraryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             } else {
                 // alert user that they had a duplicate email

@@ -17,7 +17,9 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.map);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -50,6 +52,10 @@ public class MapActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return super.onOptionsItemSelected(item);
 
         }

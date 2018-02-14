@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Debug;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -57,16 +58,29 @@ public class BrowseActivity extends AppCompatActivity {
 
     private String lastLibraryKey;
 
+    private SwipeRefreshLayout mSwipeRefresh;
+
+    private int browseType;     // 1=reserve, 2=checkout, 3=return
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Intent startingIntent = getIntent();
+        browseType = Integer.parseInt(startingIntent.getStringExtra("BROWSE_TYPE"));
 
         SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
                 Context.MODE_PRIVATE);
         lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
+
+        if (browseType == 1)
+            toolbar.setTitle(savedData.getString(getString(R.string.last_library_name), "Library App"));
+        else if (browseType == 2)
+            toolbar.setTitle(R.string.checkout_books);
+        else
+            toolbar.setTitle(R.string.prompt_return);
+        setSupportActionBar(toolbar);
 
         mBrowseForm = (View) findViewById(R.id.book_list);
         mProgressView = findViewById(R.id.browse_progress);
@@ -83,6 +97,14 @@ public class BrowseActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 openBookDetail(position);
+            }
+        });
+
+        mSwipeRefresh = findViewById(R.id.browse_refresh);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateBooks();
             }
         });
     }
@@ -127,6 +149,7 @@ public class BrowseActivity extends AppCompatActivity {
     private void openBookDetail(int position) {
         Intent intent = new Intent(this, BookDetailActivity.class);
         intent.putExtra("BOOK_ID", "" + position);
+        intent.putExtra("BOOK_DETAIL_TYPE", "" + browseType);
         startActivity(intent);
     }
 
@@ -151,7 +174,7 @@ public class BrowseActivity extends AppCompatActivity {
         try {
             synchronized (dataLock) {
                 showProgress(true);
-                mTask = new BrowseActivity.FetchBooksTask(this, lastLibraryKey);
+                mTask = new BrowseActivity.FetchBooksTask(this, lastLibraryKey, browseType);
                 mTask.execute();
             }
         } catch(Exception e) {Log.e("3651236128381", e.toString());}
@@ -199,10 +222,12 @@ public class BrowseActivity extends AppCompatActivity {
 
         private Activity mParent;
         private String mLibraryKey;
+        private int bookType;
 
-        FetchBooksTask(Activity parent, String lKey) {
+        FetchBooksTask(Activity parent, String lKey, int bType) {
             this.mParent = parent;
             this.mLibraryKey = lKey;
+            this.bookType = bType;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -242,9 +267,14 @@ public class BrowseActivity extends AppCompatActivity {
                             .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
                             .appendPath("library")
                             .appendPath("api")
-                            .appendPath("libraries")
-                            .appendPath("getbooks")
-                            .build();
+                            .appendPath("libraries");
+                    if (bookType == 1)
+                        builder.appendPath("getbooks");
+                    else if (bookType == 2)
+                        builder.appendPath("getreservedbooks");
+                    else
+                        builder.appendPath("getcheckedoutbooks");
+                    builder.build();
                     URL url = new URL(builder.toString());
                     // connect to the URL and open the reader
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -326,6 +356,7 @@ public class BrowseActivity extends AppCompatActivity {
             mAdapter.notifyDataSetChanged();
             mTask = null;
             showProgress(false);
+            mSwipeRefresh.setRefreshing(false);
         }
     }
 }

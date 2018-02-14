@@ -52,7 +52,9 @@ public class CreateLibraryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_library);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.create_library);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         libraryNameEnter = findViewById(R.id.create_library_name);
         librarianPasswordEnter = findViewById(R.id.create_librarian_password);
@@ -103,6 +105,10 @@ public class CreateLibraryActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return true;
 
         }
@@ -307,10 +313,12 @@ public class CreateLibraryActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.user_role), "C");
                 editor.putString(getString(R.string.checkout_limit), "1000");
                 editor.putString(getString(R.string.checkout_books), "0");
+                editor.putString(getString(R.string.last_library_name), name);
                 editor.apply();
 
                 // launch browse activity so user can view new library
                 Intent intent = new Intent(mParent, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         }

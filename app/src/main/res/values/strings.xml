@@ -17,6 +17,7 @@
     <string name="prompt_sign_up">Sign Up</string>
     <string name="user_key">User Key</string>
     <string name="last_library_key">Last Library Key</string>
+    <string name="last_library_name">Last Library Name</string>
     <string name="error_incorrect_email">No such user exists</string>
     <string name="error_incorrect_password">Password is incorrect</string>
 
@@ -35,9 +36,11 @@
     <string name="user_role">User Role</string>
     <string name="checkout_limit">Checkout Limit</string>
     <string name="user_book_count">User Book Count</string>
+    <string name="libraries">Libraries</string>
 
     <!-- Toolbar -->
     <string name="show_map">Show Map</string>
+    <string name="map">Map</string>
     <string name="change_library">Change Library</string>
     <string name="advanced">Advanced</string>
     <string name="report_bug">Report Bug</string>

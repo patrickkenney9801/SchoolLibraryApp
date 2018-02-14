@@ -19,7 +19,9 @@ public class ReportBugActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_bug);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.report_bug);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -52,6 +54,10 @@ public class ReportBugActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return super.onOptionsItemSelected(item);
 
         }
