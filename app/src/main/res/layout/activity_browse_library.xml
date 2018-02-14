@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     tools:context="com.example.patrick.library.BrowseLibraryActivity">
@@ -21,7 +17,17 @@
     <ProgressBar
         android:id="@+id/browse_library_progress"
         style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/browse_create_library"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_library" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/library_refresh"

@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -55,6 +56,8 @@ public class BrowseLibraryActivity extends AppCompatActivity {
     private final Object dataLock = new Object();
 
     private SwipeRefreshLayout mSwipeRefresh;
+
+    private Button mCreateLibrary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,14 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                 updateLibraries();
             }
         });
+
+        mCreateLibrary = findViewById(R.id.browse_create_library);
+        mCreateLibrary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoCreateLibrary();
+            }
+        });
     }
 
     @Override
@@ -101,7 +112,7 @@ public class BrowseLibraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // do not allow user to navidate the app if they do not belong to a library
+        // do not allow user to navigate the app if they do not belong to a library
         SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
                 Context.MODE_PRIVATE);
         String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
@@ -136,6 +147,11 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void gotoCreateLibrary() {
+        Intent intent = new Intent(this, CreateLibraryActivity.class);
+        startActivity(intent);
     }
 
     private void openLibraryLogin(int position) {

@@ -82,6 +82,13 @@ public class CreateLibraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // do not allow user to navigate the app if they do not belong to a library
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
+        if (lastLibraryKey == null || lastLibraryKey.length() != 36)
+            return true;
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
