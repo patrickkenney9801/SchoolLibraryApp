@@ -53,7 +53,8 @@ public class BookDetailActivity extends AppCompatActivity {
     private final String RESERVE = "Reserve";
     private final String UNRESERVE = "Unreserve";
     private final String RESERVED = "Reserved";
-    private final String CHECKOUT = "Checkout";
+    private final String CHECKOUT = "Check out";
+    private final String CHECKEDOUT = "Checked out";
     private final String RETURN = "Return";
 
     @Override
@@ -83,8 +84,14 @@ public class BookDetailActivity extends AppCompatActivity {
             case 1:     if (book.userKey == null || book.userKey.length() != 36)
                             action.setText(RESERVE);
                         else if (book.userKey.equals(userKey)) {
-                            action.setText(UNRESERVE);
-                            ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            if (book.reserved) {
+                                action.setText(UNRESERVE);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            } else {
+                                action.setText(CHECKEDOUT);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
+                                action.setEnabled(false);
+                            }
                         }
                         else {
                             action.setEnabled(false);
@@ -353,6 +360,7 @@ public class BookDetailActivity extends AppCompatActivity {
             showProgress(false);
             Intent intent = new Intent(mParent, BrowseActivity.class);
             intent.putExtra("BROWSE_TYPE", "" + bookDetailType);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
