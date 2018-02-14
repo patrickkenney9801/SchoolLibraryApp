@@ -95,8 +95,16 @@ public class BookDetailActivity extends AppCompatActivity {
                         }
                         else {
                             action.setEnabled(false);
-                            action.setText(RESERVED);
-                            ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            if (book.reserved) {
+                                action.setText(RESERVED);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            }
+                            else if (book.checkedOut) {
+                                action.setText(CHECKEDOUT);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
+                            }
+                            else
+                                action.setText(CHECKEDOUT);
                         }
                         break;
             case 2:     action.setText(CHECKOUT);
