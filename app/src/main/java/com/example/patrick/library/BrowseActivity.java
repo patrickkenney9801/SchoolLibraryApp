@@ -81,6 +81,8 @@ public class BrowseActivity extends AppCompatActivity {
         else
             toolbar.setTitle(R.string.prompt_return);
         setSupportActionBar(toolbar);
+        if (browseType != 1)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mBrowseForm = (View) findViewById(R.id.book_list);
         mProgressView = findViewById(R.id.browse_progress);
@@ -141,8 +143,11 @@ public class BrowseActivity extends AppCompatActivity {
                 return true;
 
             default:
+                intent = new Intent(this, BrowseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
@@ -315,8 +320,8 @@ public class BrowseActivity extends AppCompatActivity {
                             // add libraries to list
                             Book.books.add(new Book( book.getString("name"), book.getString("author_first_name"),
                                     book.getString("author_last_name"), book.getString("year_published"),
-                                    Boolean.parseBoolean(book.getString("reserved")), book.getString("date_reserved"),
-                                    Boolean.parseBoolean(book.getString("checked_out")), book.getString("date_checked_out"),
+                                    book.getString("reserved").charAt(0), book.getString("date_reserved"),
+                                    book.getString("checked_out").charAt(0), book.getString("date_checked_out"),
                                     book.getString("user_key"), book.getString("library_key"), book.getString("book_key")));
                         }
 

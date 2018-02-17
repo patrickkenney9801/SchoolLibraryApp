@@ -1,16 +1,24 @@
 package com.example.patrick.library;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class MapActivity extends AppCompatActivity {
+
+    ImageView libraryMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +28,17 @@ public class MapActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.map);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        String encodedMap = savedData.getString(getString(R.string.map), null);
+        if (encodedMap != null) {
+            byte[] decodedString = Base64.decode(encodedMap, Base64.DEFAULT);
+            Bitmap map = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            libraryMap = findViewById(R.id.library_map);
+            libraryMap.setImageBitmap(map);
+            libraryMap.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
     }
 
     @Override

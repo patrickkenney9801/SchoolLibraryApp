@@ -65,6 +65,11 @@
     <string name="prompt_librarian_password">Librarian Password</string>
     <string name="prompt_teacher_password">Teacher Password</string>
     <string name="prompt_public_password">Public Password</string>
-    <string name="prompt_public_limit">Public Checkout Limit</string>
+    <string name="prompt_public_limit">Public Checkout Limit (5)</string>
+    <string name="error_used_library_name">Library name is already in use</string>
+    <string name="prompt_take_map_picture">Take Library Map Photo</string>
+    <string name="error_no_map_photo">Library map not provided</string>
+    <string name="prompt_lend_time">Lend Days (14)</string>
+    <string name="prompt_daily_fee">Daily Late Fee (0.00)</string>
 
 </resources>

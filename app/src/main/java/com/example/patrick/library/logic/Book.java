@@ -21,14 +21,14 @@ public class Book {
     public String libraryKey;
     public String bookKey;
 
-    public Book (String name, String authFN, String authLN, String dateP, boolean r, String dateR, boolean co, String dateCO, String uKey, String lKey, String bKey) {
+    public Book (String name, String authFN, String authLN, String dateP, char r, String dateR, char co, String dateCO, String uKey, String lKey, String bKey) {
         this.name = name;
         authorFirstName = authFN;
         authorLastName = authLN;
         datePublished = dateP;
-        reserved = r;
+        reserved = r == '1';
         dateReserved = dateR;
-        checkedOut = co;
+        checkedOut = co == '1';
         dateCheckedOut = dateCO;
         userKey = uKey;
         libraryKey = lKey;

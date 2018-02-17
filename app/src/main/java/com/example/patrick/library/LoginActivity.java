@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,8 +38,6 @@ import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String KENNEY_SERVER_IP = "192.168.1.72:9801";
-
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -56,8 +57,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // delete savedData
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+
         mEmailView = findViewById(R.id.text_email);
+        mEmailView.setText(savedData.getString(getString(R.string.prompt_email), ""));
         mPasswordView = findViewById(R.id.text_password);
+        mPasswordView.setText(savedData.getString(getString(R.string.prompt_password), ""));
         mLogin = findViewById(R.id.buttonLogin);
         mCreateAccount = findViewById(R.id.buttonSignUp);
 
@@ -74,6 +81,11 @@ public class LoginActivity extends AppCompatActivity {
         });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+
+        SharedPreferences.Editor editor = savedData.edit();
+        editor.clear();
+        editor.commit();
     }
 
     private void createAccount() {
@@ -214,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
         private String userRole;
         private String checkoutLimit;
         private String userBookCount;
+        private String libraryMap;
 
         UserLoginTask(Activity parent, String email, String password) {
             mParent = parent;
@@ -258,7 +271,7 @@ public class LoginActivity extends AppCompatActivity {
                     // construct the URL to fetch a user
                     Uri.Builder  builder = new Uri.Builder();
                     builder.scheme("http")
-                            .encodedAuthority(KENNEY_SERVER_IP)
+                            .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
                             .appendPath("library")
                             .appendPath("api")
                             .appendPath("users")
@@ -304,6 +317,7 @@ public class LoginActivity extends AppCompatActivity {
                             lastLibraryName = user.getString("last_library_name");
                             checkoutLimit = user.getString("checkout_limit");
                             userBookCount = user.getString("user_book_count");
+                            libraryMap = user.getString("library_map");
                         }
 
                         return SUCCESS;
@@ -340,7 +354,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer success) {
             mAuthTask = null;
-            showProgress(false);
 
             if (success == SUCCESS) {
                 // store data for later use
@@ -357,7 +370,8 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString(getString(R.string.last_library_name), lastLibraryName);
                     editor.putString(getString(R.string.user_role), userRole);
                     editor.putString(getString(R.string.checkout_limit), checkoutLimit);
-                    editor.putString(getString(R.string.checkout_books), userBookCount);
+                    editor.putString(getString(R.string.user_book_count), userBookCount);
+                    editor.putString(getString(R.string.map), libraryMap);
                 }
                 editor.apply();
 
@@ -386,7 +400,7 @@ public class LoginActivity extends AppCompatActivity {
             } else if (success == OTHER_FAILURE) {
                 Toast.makeText(mParent, "Strange things did happen in the LoginTask", Toast.LENGTH_SHORT).show();
             }
-            // if there was NO_INTERNET, just wait for the user to turn on internet
+            showProgress(false);
         }
 
         @Override

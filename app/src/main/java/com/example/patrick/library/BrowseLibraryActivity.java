@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -307,7 +311,9 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                             // add libraries to list
                             Library.libraries.add(new Library( library.getString("name"), library.getString("librarian_password"),
                                                                library.getString("teacher_password"), library.getString("general_password"),
-                                                               Integer.parseInt(library.getString("general_checkout_limit")), library.getString("library_key")));
+                                                               Integer.parseInt(library.getString("general_checkout_limit")), library.getString("library_key"),
+                                                               library.getString("library_map"), Integer.parseInt(library.getString("lend_days")),
+                                                               Float.parseFloat(library.getString("daily_late_fee"))));
                         }
 
                         Log.d(LOG_TAG, libraryJSON.toString());

@@ -37,13 +37,11 @@
                 android:id="@+id/create_library_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="72dp"
+                android:layout_marginTop="12dp"
                 android:ems="10"
                 android:hint="@string/prompt_library_name"
-                android:inputType="textPersonName"
-                android:singleLine="true"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="64dp" />
+                android:inputType="textCapWords"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/create_librarian_password"
@@ -52,9 +50,7 @@
                 android:ems="10"
                 android:hint="@string/prompt_librarian_password"
                 android:inputType="textPassword"
-                android:singleLine="true"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="110dp" />
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/create_teacher_password"
@@ -63,9 +59,7 @@
                 android:ems="10"
                 android:hint="@string/prompt_teacher_password"
                 android:inputType="textPassword"
-                android:singleLine="true"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="156dp" />
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/create_public_password"
@@ -74,9 +68,7 @@
                 android:ems="10"
                 android:hint="@string/prompt_public_password"
                 android:inputType="textPassword"
-                android:singleLine="true"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="202dp" />
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/create_general_checkout_limit"
@@ -84,19 +76,36 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/prompt_public_limit"
-                android:inputType="textPostalAddress"
-                android:singleLine="true"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="248dp" />
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/create_general_lend_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_lend_time"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/create_daily_fee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/prompt_daily_fee"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/take_map_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_take_map_picture" />
 
             <Button
                 android:id="@+id/create_library_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="@string/create_library"
-                tools:layout_editor_absoluteX="125dp"
-                tools:layout_editor_absoluteY="349dp" />
+                android:text="@string/create_library" />
 
         </LinearLayout>
     </ScrollView>

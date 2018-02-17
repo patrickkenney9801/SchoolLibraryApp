@@ -100,7 +100,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
 
     private void attemptLibraryLogin(int loginMethod, String pass) {
         showProgress(true);
-        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey, selectedLibrary.name);
+        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey, selectedLibrary.name, selectedLibrary.libraryMap);
         mTask.execute();
     }
 
@@ -201,13 +201,15 @@ public class LibraryLoginActivity extends AppCompatActivity {
         private String mLibraryKey;
         private String mBookCount;
         private String libraryName;
+        private String libraryMap;
 
-        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey, String libName) {
+        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey, String libName, String lMap) {
             this.mParent = parent;
             this.loginMethod = logMethod;
             this.mPassword = pass;
             this.mLibraryKey = libKey;
             this.libraryName = libName;
+            this.libraryMap = lMap;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -338,7 +340,6 @@ public class LibraryLoginActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean success) {
             // update list view
             mTask = null;
-            showProgress(false);
 
             if (success) {
                 // add library and permissions to saved data
@@ -350,6 +351,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 editor.putString(getString(R.string.user_book_count), mBookCount);
                 editor.putString(getString(R.string.last_library_key), mLibraryKey);
                 editor.putString(getString(R.string.last_library_name), libraryName);
+                editor.putString(getString(R.string.map), libraryMap);
                 editor.apply();
 
                 // take user to browse for the library
@@ -360,6 +362,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 passwordEntry.setError(getString(R.string.error_incorrect_password));
                 passwordEntry.requestFocus();
             }
+            showProgress(false);
         }
     }
 }

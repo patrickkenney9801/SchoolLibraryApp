@@ -103,8 +103,6 @@ public class BookDetailActivity extends AppCompatActivity {
                                 action.setText(CHECKEDOUT);
                                 ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
                             }
-                            else
-                                action.setText(CHECKEDOUT);
                         }
                         break;
             case 2:     action.setText(CHECKOUT);
@@ -365,11 +363,11 @@ public class BookDetailActivity extends AppCompatActivity {
             }
             editor.apply();
 
-            showProgress(false);
             Intent intent = new Intent(mParent, BrowseActivity.class);
             intent.putExtra("BROWSE_TYPE", "" + bookDetailType);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            showProgress(false);
         }
     }
 }
