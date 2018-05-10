@@ -221,7 +221,7 @@ public class CreateLibraryActivity extends AppCompatActivity {
                 return;
 
             // Determine how much to scale the image
-            int scaleFactor = Math.max(photoW/targetW, photoH/targetH);
+            int scaleFactor = 25;//Math.max(photoW/targetW, photoH/targetH);
 
             // Decode the image file into a Bitmap sized to fill the View
             bmOptions.inJustDecodeBounds = false;

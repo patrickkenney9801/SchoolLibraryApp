@@ -7,11 +7,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class ReportBugActivity extends AppCompatActivity {
 
-    private Button changeLibrary;
+    private TextView bugText;
     private Button reportBug;
 
     @Override
@@ -22,6 +24,16 @@ public class ReportBugActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.report_bug);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        bugText = findViewById(R.id.bug_description);
+
+        reportBug = findViewById(R.id.report_bug);
+        reportBug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bugText.setText("");
+            }
+        });
     }
 
     @Override
