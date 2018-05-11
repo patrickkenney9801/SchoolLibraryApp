@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Books on the Go</string>
-    <string name="saved_data_file_key" translatable="false">com.example.patrick.library.SAVED_DATA</string>
+    <string name="saved_data_file_key" translatable="false">com.booksonthego.patrick.library.SAVED_DATA</string>
     <string name="KENNEY_SERVER_IP" translatable="false">108.205.143.97:9801</string>
 
     <string name="server_password">supersecretpassword12345</string>
