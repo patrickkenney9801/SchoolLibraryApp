@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -24,9 +24,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.patrick.library.logic.Book;
+import com.booksonthego.patrick.library.logic.Library;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -37,98 +36,70 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class BookDetailActivity extends AppCompatActivity {
+public class LibraryLoginActivity extends AppCompatActivity {
 
-    private BookActionTask mTask;
+    private LibraryLoginTask mTask;
 
-    private Button action;
-    private Book book;
-    private int bookID;
-    private int bookDetailType;     // 1=reserve, 2=checkout, 3=return
-    private String userKey;
+    private Button libraryLogin;
+    private Button generalSignUp;
+    private Button teacherSignUp;
+    private Button librarianSignUp;
+    private TextView passwordEntry;
 
+    private Library selectedLibrary;
+
+    private View mLibraryLoginForm;
     private View mProgressView;
-    private View mBookDetailForm;
-
-    private final String RESERVE = "Reserve";
-    private final String UNRESERVE = "Unreserve";
-    private final String RESERVED = "Reserved";
-    private final String CHECKOUT = "Check out";
-    private final String CHECKEDOUT = "Checked out";
-    private final String RETURN = "Return";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_detail);
+        setContentView(R.layout.activity_library_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         Intent startingIntent = getIntent();
-        bookID = Integer.parseInt(startingIntent.getStringExtra("BOOK_ID"));
-        book = Book.books.get(bookID);
-        bookDetailType = Integer.parseInt(startingIntent.getStringExtra("BOOK_DETAIL_TYPE"));
-        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
-                Context.MODE_PRIVATE);
-        userKey = savedData.getString(getString(R.string.user_key), null);
+        int libraryID = Integer.parseInt(startingIntent.getStringExtra("Library_ID"));
+        selectedLibrary = Library.libraries.get(libraryID);
 
-        toolbar.setTitle(book.name);
+        toolbar.setTitle(selectedLibrary.name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((TextView) findViewById(R.id.book_name)).setText(book.name);
-        ((TextView) findViewById(R.id.author_name)).setText(book.authorFirstName + " " + book.authorLastName);
-        ((TextView) findViewById(R.id.date_published)).setText(book.datePublished);
+        passwordEntry = findViewById(R.id.library_password);
 
-        action = findViewById(R.id.book_detail_action);
-        switch (bookDetailType) {
-            case 1:     if (book.userKey == null || book.userKey.length() != 36)
-                            action.setText(RESERVE);
-                        else if (book.userKey.equals(userKey)) {
-                            if (book.reserved) {
-                                action.setText(UNRESERVE);
-                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
-                            } else {
-                                action.setText(CHECKEDOUT);
-                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
-                                action.setEnabled(false);
-                            }
-                        }
-                        else {
-                            action.setEnabled(false);
-                            if (book.reserved) {
-                                action.setText(RESERVED);
-                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
-                            }
-                            else if (book.checkedOut) {
-                                action.setText(CHECKEDOUT);
-                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
-                            }
-                        }
-                        break;
-            case 2:     action.setText(CHECKOUT);
-                        ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
-                        break;
-            case 3:     action.setText(RETURN);
-                        ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
-                        break;
-        }
-        action.setOnClickListener(new View.OnClickListener() {
-            @Override
+        libraryLogin = findViewById(R.id.library_login);
+        libraryLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (action.getText().toString().equals(RESERVE)) {
-                    dealWithBook(1);
-                }
-                else if (action.getText().toString().equals(UNRESERVE))
-                    dealWithBook(2);
-                else if (action.getText().toString().equals(CHECKOUT))
-                    dealWithBook(3);
-                else if (action.getText().toString().equals(RETURN))
-                    dealWithBook(4);
+                attemptLibraryLogin(1, passwordEntry.getText().toString());
+            }
+        });
+        generalSignUp = findViewById(R.id.library_general);
+        generalSignUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                attemptLibraryLogin(2, passwordEntry.getText().toString());
+            }
+        });
+        teacherSignUp = findViewById(R.id.library_teacher);
+        teacherSignUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                attemptLibraryLogin(3, passwordEntry.getText().toString());
+            }
+        });
+        librarianSignUp = findViewById(R.id.library_librarian);
+        librarianSignUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                attemptLibraryLogin(4, passwordEntry.getText().toString());
             }
         });
 
-        mProgressView = findViewById(R.id.book_detail_progress);
-        mBookDetailForm = findViewById(R.id.book_detail_form);
+        mLibraryLoginForm = findViewById(R.id.library_login_form);
+        mProgressView = findViewById(R.id.library_login_progress);
+    }
+
+    private void attemptLibraryLogin(int loginMethod, String pass) {
+        showProgress(true);
+        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey, selectedLibrary.name, selectedLibrary.libraryMap);
+        mTask.execute();
     }
 
     @Override
@@ -140,6 +111,13 @@ public class BookDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // do not allow user to navidate the app if they do not belong to a library
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
+        if (lastLibraryKey == null || lastLibraryKey.length() != 36)
+            return true;
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
@@ -172,28 +150,6 @@ public class BookDetailActivity extends AppCompatActivity {
         }
     }
 
-    // actionType:      1=reserve,2=unreserve,3=checkout,4=return
-    private void dealWithBook(int actionType) {
-        if (actionType == 1) {
-            SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
-                    Context.MODE_PRIVATE);
-            int currentBookCount = Integer.parseInt(savedData.getString(getString(R.string.user_book_count), null));
-            int maxBookCount = Integer.parseInt(savedData.getString(getString(R.string.checkout_limit), null));
-
-            if (currentBookCount >= maxBookCount)
-                return;
-        }
-
-        showProgress(true);
-        // librarians do this so the incorrect user key would be given
-        if (actionType == 3 || actionType == 4)
-            mTask = new BookActionTask(this, book.bookKey, book.userKey, book.libraryKey, actionType);
-        else
-        // user does this so correct user is the current user key
-            mTask = new BookActionTask(this, book.bookKey, userKey, book.libraryKey, actionType);
-        mTask.execute();
-    }
-
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -205,12 +161,12 @@ public class BookDetailActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            mBookDetailForm.animate().setDuration(shortAnimTime).alpha(
+            mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mLibraryLoginForm.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -226,26 +182,32 @@ public class BookDetailActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
-    public class BookActionTask extends AsyncTask<Void, Void, Boolean> {
+    public class LibraryLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String LOG_TAG = BrowseActivity.FetchBooksTask.class.getSimpleName();
+        private final String LOG_TAG = LibraryLoginActivity.LibraryLoginTask.class.getSimpleName();
 
         private Activity mParent;
-        private String mBookKey;
-        private String mUserKey;
-        private String mLibraryKey;
-        private int actionType;
+        private int loginMethod;
+        private String mPassword;
 
-        BookActionTask(Activity parent, String bKey, String uKey, String lKey, int aType) {
+        private String mRole;
+        private String mCOLimit;
+        private String mLibraryKey;
+        private String mBookCount;
+        private String libraryName;
+        private String libraryMap;
+
+        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey, String libName, String lMap) {
             this.mParent = parent;
-            this.mBookKey = bKey;
-            this.mUserKey = uKey;
-            this.mLibraryKey = lKey;
-            this.actionType = aType;
+            this.loginMethod = logMethod;
+            this.mPassword = pass;
+            this.mLibraryKey = libKey;
+            this.libraryName = libName;
+            this.libraryMap = lMap;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -272,14 +234,13 @@ public class BookDetailActivity extends AppCompatActivity {
                 });
             } else {
                 try {
+                    SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
+                            Context.MODE_PRIVATE);
                     // create server JSON
-                    JSONObject serverJSON = new JSONObject();
-                    serverJSON.put("server_password", getString(R.string.server_password));
-                    serverJSON.put("library_key", mLibraryKey);
-                    serverJSON.put("user_key", mUserKey);
-                    serverJSON.put("book_key", mBookKey);
-
-                    String body = String.valueOf(serverJSON);
+                    JSONObject credentialsJSON = new JSONObject();
+                    credentialsJSON.put("server_password", getString(R.string.server_password));
+                    credentialsJSON.put("library_key", mLibraryKey);
+                    credentialsJSON.put("user_key", savedData.getString(getString(R.string.user_key), ""));
 
                     // construct the URL to fetch a user
                     Uri.Builder  builder = new Uri.Builder();
@@ -287,16 +248,23 @@ public class BookDetailActivity extends AppCompatActivity {
                             .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
                             .appendPath("library")
                             .appendPath("api")
-                            .appendPath("books");
-                    if (actionType == 1)
-                        builder.appendPath("reservebook");
-                    else if (actionType == 2)
-                        builder.appendPath("unreservebook");
-                    else if (actionType == 3)
-                        builder.appendPath("checkoutbook");
-                    else
-                        builder.appendPath("returnbook");
+                            .appendPath("libraries");
+                    switch(loginMethod) {
+                        case 1:     builder.appendPath("logintolibrary");
+                                    break;
+                        case 2:     builder.appendPath("signintolibrarygeneral");
+                                    credentialsJSON.put("general_password", mPassword);
+                                    break;
+                        case 3:     builder.appendPath("signintolibraryteacher");
+                                    credentialsJSON.put("teacher_password", mPassword);
+                                    break;
+                        case 4:     builder.appendPath("signintolibrarylibrarian");
+                                    credentialsJSON.put("librarian_password", mPassword);
+                                    break;
+                        default:    return false;
+                    }
                     builder.build();
+                    
                     URL url = new URL(builder.toString());
                     // connect to the URL and open the reader
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -309,6 +277,8 @@ public class BookDetailActivity extends AppCompatActivity {
                     urlConnection.setChunkedStreamingMode(0);
                     urlConnection.connect();
 
+                    String body = String.valueOf(credentialsJSON);
+
                     // send JSON to Cloud Server
                     out = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
                     out.write(body);
@@ -319,11 +289,28 @@ public class BookDetailActivity extends AppCompatActivity {
                     Log.d(LOG_TAG, "Response Code from Server: "+responseCode);
 
                     if(responseCode == 200) {
+                        // read response to get user data from server
+                        reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String line = "";
+                        String responseBody = "";
+                        while((line = reader.readLine()) != null) {
+                            responseBody += line + '\n';
+                        }
+
+                        JSONObject permissionsJSON = new JSONObject(responseBody);
+
+                        // get important info
+                        mRole = permissionsJSON.getString("role");
+                        mCOLimit = permissionsJSON.getString("checkout_limit");
+                        mBookCount = permissionsJSON.getString("user_book_count");
+
+                        Log.d(LOG_TAG, permissionsJSON.toString());
                         return true;
                     } else if(responseCode == 310) {
                         return false;
                     } else {
                         Log.e(LOG_TAG, "response Code = "+responseCode);
+                        return false;
                     }
                 } catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "The URL was incorrectly formed");
@@ -349,24 +336,30 @@ public class BookDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
+            // update list view
             mTask = null;
 
-            // update book accessor's client side statistics
-            SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
-                    Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = savedData.edit();
-            int currentBookCount = Integer.parseInt(savedData.getString(getString(R.string.user_book_count), null));
-            if (actionType == 1) {
-                editor.putString(getString(R.string.user_book_count), "" + (currentBookCount + 1));
-            } else if (actionType == 2 || actionType == 4) {
-                editor.putString(getString(R.string.user_book_count), "" + (currentBookCount - 1));
-            }
-            editor.apply();
+            if (success) {
+                // add library and permissions to saved data
+                SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = savedData.edit();
+                editor.putString(getString(R.string.user_role), mRole);
+                editor.putString(getString(R.string.checkout_limit), mCOLimit);
+                editor.putString(getString(R.string.user_book_count), mBookCount);
+                editor.putString(getString(R.string.last_library_key), mLibraryKey);
+                editor.putString(getString(R.string.last_library_name), libraryName);
+                editor.putString(getString(R.string.map), libraryMap);
+                editor.apply();
 
-            Intent intent = new Intent(mParent, BrowseActivity.class);
-            intent.putExtra("BROWSE_TYPE", "" + bookDetailType);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                // take user to browse for the library
+                Intent intent = new Intent(mParent, BrowseActivity.class);
+                intent.putExtra("BROWSE_TYPE", "1");
+                startActivity(intent);
+            } else {
+                passwordEntry.setError(getString(R.string.error_incorrect_password));
+                passwordEntry.requestFocus();
+            }
             showProgress(false);
         }
     }

@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,8 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -16,14 +14,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.patrick.library.logic.Book;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.patrick.library">
+    package="com.booksonthego.patrick.library">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -17,27 +17,27 @@
         android:roundIcon="@mipmap/library_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".LoginActivity">
+        <activity android:name="com.booksonthego.patrick.library.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateAccountActivity" />
-        <activity android:name=".BrowseActivity" />
-        <activity android:name=".BookDetailActivity" />
-        <activity android:name=".LibraryLoginActivity" />
-        <activity android:name=".ReportBugActivity" />
-        <activity android:name=".CreateBookActivity" />
-        <activity android:name=".CreateLibraryActivity" />
-        <activity android:name=".MapActivity" />
-        <activity android:name=".BrowseLibraryActivity" />
-        <activity android:name=".AdvancedMenuActivity" />
+        <activity android:name="com.booksonthego.patrick.library.CreateAccountActivity" />
+        <activity android:name="com.booksonthego.patrick.library.BrowseActivity" />
+        <activity android:name="com.booksonthego.patrick.library.BookDetailActivity" />
+        <activity android:name="com.booksonthego.patrick.library.LibraryLoginActivity" />
+        <activity android:name="com.booksonthego.patrick.library.ReportBugActivity" />
+        <activity android:name="com.booksonthego.patrick.library.CreateBookActivity" />
+        <activity android:name="com.booksonthego.patrick.library.CreateLibraryActivity" />
+        <activity android:name="com.booksonthego.patrick.library.MapActivity" />
+        <activity android:name="com.booksonthego.patrick.library.BrowseLibraryActivity" />
+        <activity android:name="com.booksonthego.patrick.library.AdvancedMenuActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="com.booksonthego.android.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

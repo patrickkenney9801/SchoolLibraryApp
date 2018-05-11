@@ -1,4 +1,4 @@
-package com.example.patrick.library.logic;
+package com.booksonthego.patrick.library.logic;
 
 import java.util.ArrayList;
 

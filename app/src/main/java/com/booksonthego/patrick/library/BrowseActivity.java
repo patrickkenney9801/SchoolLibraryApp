@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,9 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Debug;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -28,8 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.patrick.library.logic.Book;
-import com.example.patrick.library.logic.Library;
+import com.booksonthego.patrick.library.logic.Book;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

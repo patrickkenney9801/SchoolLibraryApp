@@ -11,7 +11,7 @@
     android:paddingTop="16dp"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context="com.example.patrick.library.LoginActivity">
+    tools:context="com.booksonthego.patrick.library.LoginActivity">
 
     <!-- Create Account progress -->
     <ProgressBar

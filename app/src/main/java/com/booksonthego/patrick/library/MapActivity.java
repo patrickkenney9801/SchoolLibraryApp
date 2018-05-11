@@ -1,39 +1,42 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 
-public class ReportBugActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity {
 
-    private TextView bugText;
-    private Button reportBug;
+    ImageView libraryMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report_bug);
+        setContentView(R.layout.activity_map);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.report_bug);
+        toolbar.setTitle(R.string.map);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        bugText = findViewById(R.id.bug_description);
-
-        reportBug = findViewById(R.id.report_bug);
-        reportBug.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bugText.setText("");
-            }
-        });
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        String encodedMap = savedData.getString(getString(R.string.map), null);
+        if (encodedMap != null) {
+            byte[] decodedString = Base64.decode(encodedMap, Base64.DEFAULT);
+            Bitmap map = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            libraryMap = findViewById(R.id.library_map);
+            libraryMap.setImageBitmap(map);
+            libraryMap.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
     }
 
     @Override
@@ -48,8 +51,6 @@ public class ReportBugActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
-                intent = new Intent(this, MapActivity.class);
-                startActivity(intent);
                 return true;
 
             case R.id.change_library:
@@ -63,6 +64,8 @@ public class ReportBugActivity extends AppCompatActivity {
                 return true;
 
             case R.id.report_bug:
+                intent = new Intent(this, ReportBugActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

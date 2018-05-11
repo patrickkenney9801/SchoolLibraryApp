@@ -1,5 +1,4 @@
-package com.example.patrick.library.logic;
-import android.graphics.Bitmap;
+package com.booksonthego.patrick.library.logic;
 
 import java.util.ArrayList;
 

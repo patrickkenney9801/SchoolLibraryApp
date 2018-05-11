@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -18,10 +18,6 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
-import com.example.patrick.library.logic.Book;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -31,8 +27,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class CreateAccountActivity extends AppCompatActivity {
 

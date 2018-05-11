@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context="com.example.patrick.library.BrowseActivity">
+    tools:context="com.booksonthego.patrick.library.BrowseActivity">
 
     <include
         android:id="@+id/toolbar"

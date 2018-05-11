@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,12 +21,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.patrick.library.logic.Book;
-import com.example.patrick.library.logic.Library;
+import com.booksonthego.patrick.library.logic.Library;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,71 +39,67 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
-public class LibraryLoginActivity extends AppCompatActivity {
+public class BrowseLibraryActivity extends AppCompatActivity {
 
-    private LibraryLoginTask mTask;
+    private FetchLibrariesTask mTask = null;
 
-    private Button libraryLogin;
-    private Button generalSignUp;
-    private Button teacherSignUp;
-    private Button librarianSignUp;
-    private TextView passwordEntry;
-
-    private Library selectedLibrary;
-
-    private View mLibraryLoginForm;
+    private View mBrowseLibraryForm;
     private View mProgressView;
+
+    private ArrayAdapter mAdapter;
+    private ListView listView;
+    private ArrayList<String> libraryNames = new ArrayList<>();
+
+    private final Object dataLock = new Object();
+
+    private SwipeRefreshLayout mSwipeRefresh;
+
+    private Button mCreateLibrary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library_login);
+        setContentView(R.layout.activity_browse_library);
         Toolbar toolbar = findViewById(R.id.toolbar);
-
-        Intent startingIntent = getIntent();
-        int libraryID = Integer.parseInt(startingIntent.getStringExtra("Library_ID"));
-        selectedLibrary = Library.libraries.get(libraryID);
-
-        toolbar.setTitle(selectedLibrary.name);
+        toolbar.setTitle(R.string.libraries);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        passwordEntry = findViewById(R.id.library_password);
+        mBrowseLibraryForm = (View) findViewById(R.id.library_list);
+        mProgressView = findViewById(R.id.browse_library_progress);
 
-        libraryLogin = findViewById(R.id.library_login);
-        libraryLogin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                attemptLibraryLogin(1, passwordEntry.getText().toString());
-            }
-        });
-        generalSignUp = findViewById(R.id.library_general);
-        generalSignUp.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                attemptLibraryLogin(2, passwordEntry.getText().toString());
-            }
-        });
-        teacherSignUp = findViewById(R.id.library_teacher);
-        teacherSignUp.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                attemptLibraryLogin(3, passwordEntry.getText().toString());
-            }
-        });
-        librarianSignUp = findViewById(R.id.library_librarian);
-        librarianSignUp.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                attemptLibraryLogin(4, passwordEntry.getText().toString());
+        updateLibraries();
+
+        mAdapter = new ArrayAdapter<>(this,
+                R.layout.activity_listview, libraryNames);
+
+        listView = findViewById(R.id.library_list);
+        listView.setAdapter(mAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                openLibraryLogin(position);
             }
         });
 
-        mLibraryLoginForm = findViewById(R.id.library_login_form);
-        mProgressView = findViewById(R.id.library_login_progress);
-    }
+        mSwipeRefresh = findViewById(R.id.library_refresh);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateLibraries();
+            }
+        });
 
-    private void attemptLibraryLogin(int loginMethod, String pass) {
-        showProgress(true);
-        mTask = new LibraryLoginActivity.LibraryLoginTask(this, loginMethod, pass, selectedLibrary.libraryKey, selectedLibrary.name, selectedLibrary.libraryMap);
-        mTask.execute();
+        mCreateLibrary = findViewById(R.id.browse_create_library);
+        mCreateLibrary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoCreateLibrary();
+            }
+        });
     }
 
     @Override
@@ -113,7 +111,7 @@ public class LibraryLoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // do not allow user to navidate the app if they do not belong to a library
+        // do not allow user to navigate the app if they do not belong to a library
         SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
                 Context.MODE_PRIVATE);
         String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
@@ -128,8 +126,6 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 return true;
 
             case R.id.change_library:
-                intent = new Intent(this, BrowseLibraryActivity.class);
-                startActivity(intent);
                 return true;
 
             case R.id.advanced:
@@ -152,6 +148,39 @@ public class LibraryLoginActivity extends AppCompatActivity {
         }
     }
 
+    private void gotoCreateLibrary() {
+        Intent intent = new Intent(this, CreateLibraryActivity.class);
+        startActivity(intent);
+    }
+
+    private void openLibraryLogin(int position) {
+        Intent intent = new Intent(this, LibraryLoginActivity.class);
+        intent.putExtra("Library_ID", "" + position);
+        startActivity(intent);
+    }
+
+    /**
+     * Updates all library names from the server after storing their data
+     * @return
+     */
+    private void getLibraries() {
+        ArrayList<String> lNames = new ArrayList<>();
+        for (int i = 0; i < Library.libraries.size(); i++)
+            lNames.add(Library.libraries.get(i).name);
+        libraryNames.clear();
+        libraryNames.addAll(lNames);
+    }
+
+    private void updateLibraries() {
+        try {
+            synchronized (dataLock) {
+                showProgress(true);
+                mTask = new FetchLibrariesTask(this);
+                mTask.execute();
+            }
+        } catch(Exception e) {}
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -163,12 +192,12 @@ public class LibraryLoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLibraryLoginForm.animate().setDuration(shortAnimTime).alpha(
+            mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBrowseLibraryForm.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -184,32 +213,18 @@ public class LibraryLoginActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLibraryLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
-    public class LibraryLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class FetchLibrariesTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String LOG_TAG = LibraryLoginActivity.LibraryLoginTask.class.getSimpleName();
+        private final String LOG_TAG = BrowseLibraryActivity.FetchLibrariesTask.class.getSimpleName();
 
         private Activity mParent;
-        private int loginMethod;
-        private String mPassword;
 
-        private String mRole;
-        private String mCOLimit;
-        private String mLibraryKey;
-        private String mBookCount;
-        private String libraryName;
-        private String libraryMap;
-
-        LibraryLoginTask(Activity parent, int logMethod, String pass, String libKey, String libName, String lMap) {
+        FetchLibrariesTask(Activity parent) {
             this.mParent = parent;
-            this.loginMethod = logMethod;
-            this.mPassword = pass;
-            this.mLibraryKey = libKey;
-            this.libraryName = libName;
-            this.libraryMap = lMap;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -236,13 +251,11 @@ public class LibraryLoginActivity extends AppCompatActivity {
                 });
             } else {
                 try {
-                    SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
-                            Context.MODE_PRIVATE);
                     // create server JSON
-                    JSONObject credentialsJSON = new JSONObject();
-                    credentialsJSON.put("server_password", getString(R.string.server_password));
-                    credentialsJSON.put("library_key", mLibraryKey);
-                    credentialsJSON.put("user_key", savedData.getString(getString(R.string.user_key), ""));
+                    JSONObject serverJSON = new JSONObject();
+                    serverJSON.put("server_password", getString(R.string.server_password));
+
+                    String body = String.valueOf(serverJSON);
 
                     // construct the URL to fetch a user
                     Uri.Builder  builder = new Uri.Builder();
@@ -250,23 +263,9 @@ public class LibraryLoginActivity extends AppCompatActivity {
                             .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
                             .appendPath("library")
                             .appendPath("api")
-                            .appendPath("libraries");
-                    switch(loginMethod) {
-                        case 1:     builder.appendPath("logintolibrary");
-                                    break;
-                        case 2:     builder.appendPath("signintolibrarygeneral");
-                                    credentialsJSON.put("general_password", mPassword);
-                                    break;
-                        case 3:     builder.appendPath("signintolibraryteacher");
-                                    credentialsJSON.put("teacher_password", mPassword);
-                                    break;
-                        case 4:     builder.appendPath("signintolibrarylibrarian");
-                                    credentialsJSON.put("librarian_password", mPassword);
-                                    break;
-                        default:    return false;
-                    }
-                    builder.build();
-                    
+                            .appendPath("libraries")
+                            .appendPath("getlibraries")
+                            .build();
                     URL url = new URL(builder.toString());
                     // connect to the URL and open the reader
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -278,8 +277,6 @@ public class LibraryLoginActivity extends AppCompatActivity {
                     urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                     urlConnection.setChunkedStreamingMode(0);
                     urlConnection.connect();
-
-                    String body = String.valueOf(credentialsJSON);
 
                     // send JSON to Cloud Server
                     out = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
@@ -299,20 +296,27 @@ public class LibraryLoginActivity extends AppCompatActivity {
                             responseBody += line + '\n';
                         }
 
-                        JSONObject permissionsJSON = new JSONObject(responseBody);
+                        JSONArray libraryJSON = new JSONArray(responseBody);
 
-                        // get important info
-                        mRole = permissionsJSON.getString("role");
-                        mCOLimit = permissionsJSON.getString("checkout_limit");
-                        mBookCount = permissionsJSON.getString("user_book_count");
+                        Library.libraries.clear();
 
-                        Log.d(LOG_TAG, permissionsJSON.toString());
+                        for (int i = 0; i < libraryJSON.length(); i++) {
+                            JSONObject library = libraryJSON.getJSONObject(i);
+
+                            // add libraries to list
+                            Library.libraries.add(new Library( library.getString("name"), library.getString("librarian_password"),
+                                                               library.getString("teacher_password"), library.getString("general_password"),
+                                                               Integer.parseInt(library.getString("general_checkout_limit")), library.getString("library_key"),
+                                                               library.getString("library_map"), Integer.parseInt(library.getString("lend_days")),
+                                                               Float.parseFloat(library.getString("daily_late_fee"))));
+                        }
+
+                        Log.d(LOG_TAG, libraryJSON.toString());
                         return true;
                     } else if(responseCode == 310) {
                         return false;
                     } else {
                         Log.e(LOG_TAG, "response Code = "+responseCode);
-                        return false;
                     }
                 } catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "The URL was incorrectly formed");
@@ -339,30 +343,11 @@ public class LibraryLoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             // update list view
+            getLibraries();
+            mAdapter.notifyDataSetChanged();
             mTask = null;
-
-            if (success) {
-                // add library and permissions to saved data
-                SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
-                        Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = savedData.edit();
-                editor.putString(getString(R.string.user_role), mRole);
-                editor.putString(getString(R.string.checkout_limit), mCOLimit);
-                editor.putString(getString(R.string.user_book_count), mBookCount);
-                editor.putString(getString(R.string.last_library_key), mLibraryKey);
-                editor.putString(getString(R.string.last_library_name), libraryName);
-                editor.putString(getString(R.string.map), libraryMap);
-                editor.apply();
-
-                // take user to browse for the library
-                Intent intent = new Intent(mParent, BrowseActivity.class);
-                intent.putExtra("BROWSE_TYPE", "1");
-                startActivity(intent);
-            } else {
-                passwordEntry.setError(getString(R.string.error_incorrect_password));
-                passwordEntry.requestFocus();
-            }
             showProgress(false);
+            mSwipeRefresh.setRefreshing(false);
         }
     }
 }

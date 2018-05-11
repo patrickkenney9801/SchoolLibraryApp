@@ -1,4 +1,4 @@
-package com.example.patrick.library;
+package com.booksonthego.patrick.library;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,104 +7,126 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.patrick.library.logic.Book;
-import com.example.patrick.library.logic.Library;
+import com.booksonthego.patrick.library.logic.Book;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
-public class BrowseLibraryActivity extends AppCompatActivity {
+public class BookDetailActivity extends AppCompatActivity {
 
-    private FetchLibrariesTask mTask = null;
+    private BookActionTask mTask;
 
-    private View mBrowseLibraryForm;
+    private Button action;
+    private Book book;
+    private int bookID;
+    private int bookDetailType;     // 1=reserve, 2=checkout, 3=return
+    private String userKey;
+
     private View mProgressView;
+    private View mBookDetailForm;
 
-    private ArrayAdapter mAdapter;
-    private ListView listView;
-    private ArrayList<String> libraryNames = new ArrayList<>();
-
-    private final Object dataLock = new Object();
-
-    private SwipeRefreshLayout mSwipeRefresh;
-
-    private Button mCreateLibrary;
+    private final String RESERVE = "Reserve";
+    private final String UNRESERVE = "Unreserve";
+    private final String RESERVED = "Reserved";
+    private final String CHECKOUT = "Check out";
+    private final String CHECKEDOUT = "Checked out";
+    private final String RETURN = "Return";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browse_library);
+        setContentView(R.layout.activity_book_detail);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.libraries);
+
+        Intent startingIntent = getIntent();
+        bookID = Integer.parseInt(startingIntent.getStringExtra("BOOK_ID"));
+        book = Book.books.get(bookID);
+        bookDetailType = Integer.parseInt(startingIntent.getStringExtra("BOOK_DETAIL_TYPE"));
+        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                Context.MODE_PRIVATE);
+        userKey = savedData.getString(getString(R.string.user_key), null);
+
+        toolbar.setTitle(book.name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBrowseLibraryForm = (View) findViewById(R.id.library_list);
-        mProgressView = findViewById(R.id.browse_library_progress);
+        ((TextView) findViewById(R.id.book_name)).setText(book.name);
+        ((TextView) findViewById(R.id.author_name)).setText(book.authorFirstName + " " + book.authorLastName);
+        ((TextView) findViewById(R.id.date_published)).setText(book.datePublished);
 
-        updateLibraries();
-
-        mAdapter = new ArrayAdapter<>(this,
-                R.layout.activity_listview, libraryNames);
-
-        listView = findViewById(R.id.library_list);
-        listView.setAdapter(mAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                openLibraryLogin(position);
-            }
-        });
-
-        mSwipeRefresh = findViewById(R.id.library_refresh);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                updateLibraries();
-            }
-        });
-
-        mCreateLibrary = findViewById(R.id.browse_create_library);
-        mCreateLibrary.setOnClickListener(new View.OnClickListener() {
+        action = findViewById(R.id.book_detail_action);
+        switch (bookDetailType) {
+            case 1:     if (book.userKey == null || book.userKey.length() != 36)
+                            action.setText(RESERVE);
+                        else if (book.userKey.equals(userKey)) {
+                            if (book.reserved) {
+                                action.setText(UNRESERVE);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            } else {
+                                action.setText(CHECKEDOUT);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
+                                action.setEnabled(false);
+                            }
+                        }
+                        else {
+                            action.setEnabled(false);
+                            if (book.reserved) {
+                                action.setText(RESERVED);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                            }
+                            else if (book.checkedOut) {
+                                action.setText(CHECKEDOUT);
+                                ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
+                            }
+                        }
+                        break;
+            case 2:     action.setText(CHECKOUT);
+                        ((TextView) findViewById(R.id.date_taken)).setText(book.dateReserved.substring(0, 10));
+                        break;
+            case 3:     action.setText(RETURN);
+                        ((TextView) findViewById(R.id.date_taken)).setText(book.dateCheckedOut.substring(0, 10));
+                        break;
+        }
+        action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotoCreateLibrary();
+                if (action.getText().toString().equals(RESERVE)) {
+                    dealWithBook(1);
+                }
+                else if (action.getText().toString().equals(UNRESERVE))
+                    dealWithBook(2);
+                else if (action.getText().toString().equals(CHECKOUT))
+                    dealWithBook(3);
+                else if (action.getText().toString().equals(RETURN))
+                    dealWithBook(4);
             }
         });
+
+        mProgressView = findViewById(R.id.book_detail_progress);
+        mBookDetailForm = findViewById(R.id.book_detail_form);
     }
 
     @Override
@@ -116,13 +138,6 @@ public class BrowseLibraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // do not allow user to navigate the app if they do not belong to a library
-        SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
-                Context.MODE_PRIVATE);
-        String lastLibraryKey = savedData.getString(getString(R.string.last_library_key), null);
-        if (lastLibraryKey == null || lastLibraryKey.length() != 36)
-            return true;
-
         Intent intent;
         switch (item.getItemId()) {
             case R.id.show_map:
@@ -131,6 +146,8 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                 return true;
 
             case R.id.change_library:
+                intent = new Intent(this, BrowseLibraryActivity.class);
+                startActivity(intent);
                 return true;
 
             case R.id.advanced:
@@ -153,37 +170,26 @@ public class BrowseLibraryActivity extends AppCompatActivity {
         }
     }
 
-    private void gotoCreateLibrary() {
-        Intent intent = new Intent(this, CreateLibraryActivity.class);
-        startActivity(intent);
-    }
+    // actionType:      1=reserve,2=unreserve,3=checkout,4=return
+    private void dealWithBook(int actionType) {
+        if (actionType == 1) {
+            SharedPreferences savedData = this.getSharedPreferences(getString(R.string.saved_data_file_key),
+                    Context.MODE_PRIVATE);
+            int currentBookCount = Integer.parseInt(savedData.getString(getString(R.string.user_book_count), null));
+            int maxBookCount = Integer.parseInt(savedData.getString(getString(R.string.checkout_limit), null));
 
-    private void openLibraryLogin(int position) {
-        Intent intent = new Intent(this, LibraryLoginActivity.class);
-        intent.putExtra("Library_ID", "" + position);
-        startActivity(intent);
-    }
+            if (currentBookCount >= maxBookCount)
+                return;
+        }
 
-    /**
-     * Updates all library names from the server after storing their data
-     * @return
-     */
-    private void getLibraries() {
-        ArrayList<String> lNames = new ArrayList<>();
-        for (int i = 0; i < Library.libraries.size(); i++)
-            lNames.add(Library.libraries.get(i).name);
-        libraryNames.clear();
-        libraryNames.addAll(lNames);
-    }
-
-    private void updateLibraries() {
-        try {
-            synchronized (dataLock) {
-                showProgress(true);
-                mTask = new FetchLibrariesTask(this);
-                mTask.execute();
-            }
-        } catch(Exception e) {}
+        showProgress(true);
+        // librarians do this so the incorrect user key would be given
+        if (actionType == 3 || actionType == 4)
+            mTask = new BookActionTask(this, book.bookKey, book.userKey, book.libraryKey, actionType);
+        else
+        // user does this so correct user is the current user key
+            mTask = new BookActionTask(this, book.bookKey, userKey, book.libraryKey, actionType);
+        mTask.execute();
     }
 
     /**
@@ -197,12 +203,12 @@ public class BrowseLibraryActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            mBrowseLibraryForm.animate().setDuration(shortAnimTime).alpha(
+            mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBookDetailForm.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -218,18 +224,26 @@ public class BrowseLibraryActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mBrowseLibraryForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBookDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
-    public class FetchLibrariesTask extends AsyncTask<Void, Void, Boolean> {
+    public class BookActionTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String LOG_TAG = BrowseLibraryActivity.FetchLibrariesTask.class.getSimpleName();
+        private final String LOG_TAG = BrowseActivity.FetchBooksTask.class.getSimpleName();
 
         private Activity mParent;
+        private String mBookKey;
+        private String mUserKey;
+        private String mLibraryKey;
+        private int actionType;
 
-        FetchLibrariesTask(Activity parent) {
+        BookActionTask(Activity parent, String bKey, String uKey, String lKey, int aType) {
             this.mParent = parent;
+            this.mBookKey = bKey;
+            this.mUserKey = uKey;
+            this.mLibraryKey = lKey;
+            this.actionType = aType;
         }
 
         protected Boolean doInBackground(Void... Params) {
@@ -259,6 +273,9 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                     // create server JSON
                     JSONObject serverJSON = new JSONObject();
                     serverJSON.put("server_password", getString(R.string.server_password));
+                    serverJSON.put("library_key", mLibraryKey);
+                    serverJSON.put("user_key", mUserKey);
+                    serverJSON.put("book_key", mBookKey);
 
                     String body = String.valueOf(serverJSON);
 
@@ -268,9 +285,16 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                             .encodedAuthority(getString(R.string.KENNEY_SERVER_IP))
                             .appendPath("library")
                             .appendPath("api")
-                            .appendPath("libraries")
-                            .appendPath("getlibraries")
-                            .build();
+                            .appendPath("books");
+                    if (actionType == 1)
+                        builder.appendPath("reservebook");
+                    else if (actionType == 2)
+                        builder.appendPath("unreservebook");
+                    else if (actionType == 3)
+                        builder.appendPath("checkoutbook");
+                    else
+                        builder.appendPath("returnbook");
+                    builder.build();
                     URL url = new URL(builder.toString());
                     // connect to the URL and open the reader
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -293,30 +317,6 @@ public class BrowseLibraryActivity extends AppCompatActivity {
                     Log.d(LOG_TAG, "Response Code from Server: "+responseCode);
 
                     if(responseCode == 200) {
-                        // read response to get user data from server
-                        reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        String line = "";
-                        String responseBody = "";
-                        while((line = reader.readLine()) != null) {
-                            responseBody += line + '\n';
-                        }
-
-                        JSONArray libraryJSON = new JSONArray(responseBody);
-
-                        Library.libraries.clear();
-
-                        for (int i = 0; i < libraryJSON.length(); i++) {
-                            JSONObject library = libraryJSON.getJSONObject(i);
-
-                            // add libraries to list
-                            Library.libraries.add(new Library( library.getString("name"), library.getString("librarian_password"),
-                                                               library.getString("teacher_password"), library.getString("general_password"),
-                                                               Integer.parseInt(library.getString("general_checkout_limit")), library.getString("library_key"),
-                                                               library.getString("library_map"), Integer.parseInt(library.getString("lend_days")),
-                                                               Float.parseFloat(library.getString("daily_late_fee"))));
-                        }
-
-                        Log.d(LOG_TAG, libraryJSON.toString());
                         return true;
                     } else if(responseCode == 310) {
                         return false;
@@ -347,12 +347,25 @@ public class BrowseLibraryActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            // update list view
-            getLibraries();
-            mAdapter.notifyDataSetChanged();
             mTask = null;
+
+            // update book accessor's client side statistics
+            SharedPreferences savedData = mParent.getSharedPreferences(getString(R.string.saved_data_file_key),
+                    Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = savedData.edit();
+            int currentBookCount = Integer.parseInt(savedData.getString(getString(R.string.user_book_count), null));
+            if (actionType == 1) {
+                editor.putString(getString(R.string.user_book_count), "" + (currentBookCount + 1));
+            } else if (actionType == 2 || actionType == 4) {
+                editor.putString(getString(R.string.user_book_count), "" + (currentBookCount - 1));
+            }
+            editor.apply();
+
+            Intent intent = new Intent(mParent, BrowseActivity.class);
+            intent.putExtra("BROWSE_TYPE", "" + bookDetailType);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             showProgress(false);
-            mSwipeRefresh.setRefreshing(false);
         }
     }
 }
