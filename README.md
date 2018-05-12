@@ -8,7 +8,7 @@ Download the SchoolLibraryApp apk file, and run using an Android device.
 School Library App is functional, as seen by internal usage and testing. If any errors happen to occur, a bug reporting system is integrated into the app.
 
 ## Built With
-* [Android Studio](https://developer.android.com/studio/index.html) 3.0.1 - Integrated Development Environment
+** [Android Studio](https://developer.android.com/studio/index.html) 3.0.1 - Integrated Development Environment
 * [Postman](https://www.getpostman.com/) - API Development
 
 ## Versioning
